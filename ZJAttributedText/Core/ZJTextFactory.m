@@ -423,11 +423,11 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     CGFloat ascent = 0;
     CGFloat descent = 0;
     switch (element.attributes.attachAlign.integerValue) {
-        case ZJTextattachAlignBottomToBaseLine:
+        case ZJTextAttachAlignBottomToBaseLine:
             ascent = height;
             break;
             
-        case ZJTextattachAlignCenterToFont: {
+        case ZJTextAttachAlignCenterToFont: {
             UIFont *font = element.attributes.font ? : [UIFont systemFontOfSize:12];
             CGFloat fontAscent = fabs(font.ascender);
             CGFloat fontDescent = fabs(font.descender);

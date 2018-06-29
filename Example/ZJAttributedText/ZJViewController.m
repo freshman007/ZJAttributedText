@@ -189,7 +189,7 @@
     NSString *image3Path = [[NSBundle mainBundle] pathForResource:@"dy008" ofType:@"png"];
     element3.content = [UIImage imageWithContentsOfFile:image3Path];
 //    element3.attributes.attachSize =  [NSValue valueWithCGSize:CGSizeMake(30, 30)];
-    element3.attributes.attachAlign = @(ZJTextattachAlignCenterToFont);
+    element3.attributes.attachAlign = @(ZJTextAttachAlignCenterToFont);
     element3.attributes.align = @2;
     element3.attributes.font = [UIFont systemFontOfSize:10];
     element3.attributes.minLineHeight = @100;
@@ -208,7 +208,7 @@
     ZJTextElement *element5 = [ZJTextElement new];
     NSString *localImagePath = [[NSBundle mainBundle] pathForResource:@"dy122" ofType:@"png"];
     element5.content = [UIImage imageWithContentsOfFile:localImagePath];
-    element5.attributes.attachAlign = @(ZJTextattachAlignCenterToFont);
+    element5.attributes.attachAlign = @(ZJTextAttachAlignCenterToFont);
     element5.attributes.align = @2;
     element5.attributes.font = [UIFont systemFontOfSize:10];
     element5.attributes.minLineHeight = @100;
@@ -245,7 +245,7 @@
     defaultAttributes.minLineHeight = @20;
     defaultAttributes.maxLineHeight = @20;
     defaultAttributes.align = @1;
-    defaultAttributes.attachAlign = @(ZJTextattachAlignCenterToFont);
+    defaultAttributes.attachAlign = @(ZJTextAttachAlignCenterToFont);
     defaultAttributes.cacheFrame = @YES;
     defaultAttributes.onClicked = ^(ZJTextElement *element) {
         NSLog(@"其他文本: %@", element.content);

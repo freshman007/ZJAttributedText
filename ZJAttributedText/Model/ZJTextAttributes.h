@@ -8,8 +8,8 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSUInteger, ZJTextattachAlign) {
-    ZJTextattachAlignBottomToBaseLine = 0,         //图片底部对齐基准线
-    ZJTextattachAlignCenterToFont                  //图片居中向特定字体对齐, 需要设置 font 属性, 若没有为系统12号字体
+    ZJTextAttachAlignBottomToBaseLine = 0,         //图片底部对齐基准线
+    ZJTextAttachAlignCenterToFont                  //图片居中向特定字体对齐, 需要设置 font 属性, 若没有为系统12号字体
 };
 
 @class ZJTextElement;
