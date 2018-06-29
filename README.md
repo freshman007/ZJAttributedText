@@ -72,14 +72,14 @@
 
 ## 核心方法与属性
 
-对 NSString 的扩展
+对 NSString 的扩展, 操作字符串生成绘制对应视图
 
 ##### 核心方法
 
 * append(id content)
 
 		拼接
-		content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须指定attachSize属性)
+		content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须指定attachSize属性)、视图(CALayer/UIView)
 
 * entire()
 
@@ -88,11 +88,11 @@
 
 * drawLayer(^(CALayer *drawLayer)completion)
 
-		绘制layer, 无法响应手势
+		绘制layer, 无法响应手势, 当有UIView混排建议使用 drawView
 
 * drawView(^(UIView *drawView)completion)
 
- 		绘制View, 可响应手势
+ 		绘制View, 可响应手势, 建议使用此API
 
 ##### 属性
 
@@ -155,7 +155,8 @@
 结论:
 1. 相较于常规方式降低了主线程压力 70ms -> 29ms
 2. 越复杂的文本收益越高(多控件合一, 异步绘制), 上图中大段富文本绘制时间也只多了 15ms, 耗时增长少
-3. 总体耗时增加了15ms, 都在子线程, 毕竟处理的逻辑比系统的多.
+3. 总体耗时增加了15ms, 都在子线程, 毕竟处理的逻辑比系统的多
+4. 与 YYText 总体性能相仿
 
 ## 依赖
 
