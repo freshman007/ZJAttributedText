@@ -15,6 +15,11 @@
 #import <SDWebImage/SDImageCache.h>
 #import <SDWebImage/SDWebImageManager.h>
 
+typedef NS_ENUM(NSUInteger, ZJTextDrawType) {
+    ZJTextDrawTypeLayer = 0,
+    ZJTextDrawTypeView
+};
+
 static NSString *const kZJTextElementAttributeName = @"kZJTextElementAttributeName";
 static NSString *const kZJTextDrawFrameAssociateKey = @"kZJTextDrawFrameAssociateKey";
 static NSString *const kZJTextDrawImageAssociateKey = @"kZJTextDrawImageAssociateKey";
@@ -28,20 +33,17 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
 
 + (void)drawTextViewWithElements:(NSArray<ZJTextElement *> *)elements defaultAttributes:(ZJTextAttributes *)defaultAttributes completion:(void(^)(UIView *drawView))completion {
     
-    //内部调用绘制Layer, 再用视图包装用来计算点击
-    [self drawTextLayerWithElements:elements defaultAttributes:defaultAttributes completion:^(CALayer *drawLayer) {
-        if (drawLayer) {
-            ZJTextView *drawView = [[ZJTextView alloc] initWithFrame:drawLayer.bounds];
-            drawView.elements = elements;
-            drawView.drawLayer = drawLayer;
-            if (completion) {
-                completion(drawView);
-            }
-        }
-    }];
+    [self drawTextType:ZJTextDrawTypeView WithElements:elements defaultAttributes:defaultAttributes completion:completion];
 }
 
 + (void)drawTextLayerWithElements:(NSArray<ZJTextElement *> *)elements defaultAttributes:(ZJTextAttributes *)defaultAttributes completion:(void(^)(CALayer *drawLayer))completion {
+    
+    [self drawTextType:ZJTextDrawTypeLayer WithElements:elements defaultAttributes:defaultAttributes completion:completion];
+}
+
+#pragma mark - private
+
++ (void)drawTextType:(ZJTextDrawType)type WithElements:(NSArray<ZJTextElement *> *)elements defaultAttributes:(ZJTextAttributes *)defaultAttributes completion:(void(^)(id draw))completion {
     
     if (!elements.count) return;
     
@@ -51,6 +53,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CFMutableAttributedStringRef entireAttributedString = CFAttributedStringCreateMutable(CFAllocatorGetDefault(), 0);
         NSMutableArray *imageElements = [NSMutableArray array];
         NSMutableArray *imageURLElements = [NSMutableArray array];
+        NSMutableArray *viewElements = [NSMutableArray array];
         
         for (ZJTextElement *element in elements) {
             
@@ -80,15 +83,15 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 objc_setAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String, element.content, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
                 
                 //生成图片占位富文本
-                [self appendImageElement:element toEntireAttributedString:entireAttributedString];
-
+                [self appendAttachElement:element toEntireAttributedString:entireAttributedString];
+                
             } else if ([element.content isKindOfClass:[NSURL class]]) {
                 
                 //若有缓存则转换为图片元素
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:element.content];
                 UIImage *cachedImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:key];
                 if (cachedImage) {
-    
+                    
                     //保存绘制的图片
                     objc_setAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String, cachedImage, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
                     
@@ -101,9 +104,9 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 }
                 
                 //生成图片占位富文本
-                [self appendImageElement:element toEntireAttributedString:entireAttributedString];
+                [self appendAttachElement:element toEntireAttributedString:entireAttributedString];
                 
-            } else if ([element.content isKindOfClass:[UIView class]] || [element.content isKindOfClass:[CALayer class]]) {
+            } else if ([element.content isKindOfClass:[CALayer class]] || ([element.content isKindOfClass:[UIView class]] && type == ZJTextDrawTypeLayer)) {
                 
                 //CALayer转换为图片
                 UIImage *image = [self drawImageWithContent:element.content];
@@ -117,8 +120,15 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                     [imageElements addObject:element];
                     
                     //生成图片占位富文本
-                    [self appendImageElement:element toEntireAttributedString:entireAttributedString];
+                    [self appendAttachElement:element toEntireAttributedString:entireAttributedString];
                 }
+            } else if ([element.content isKindOfClass:[UIView class]] || type == ZJTextDrawTypeView) {
+             
+                //保存视图类元素
+                [viewElements addObject:element];
+                
+                //生成图片占位富文本
+                [self appendAttachElement:element toEntireAttributedString:entireAttributedString];
             }
         }
         
@@ -141,13 +151,23 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         
         //主线程生成Layer
         dispatch_async(dispatch_get_main_queue(), ^{
+            
             ZJTextLayer *layer = [ZJTextLayer layer];
             [self drawURLImageOnLayer:layer imageURLElements:imageURLElements];
             layer.elements = elements;
             layer.frame = CGRectMake(0, 0, size.width, size.height);
             layer.contents = (__bridge id)drawImage.CGImage;
+
+            id draw = layer;
+            if (type == ZJTextDrawTypeView) {
+                ZJTextView *drawView = [[ZJTextView alloc] initWithFrame:layer.bounds];
+                [self addOnView:drawView viewElements:viewElements];
+                drawView.elements = elements;
+                drawView.drawLayer = layer;
+                draw = drawView;
+            }
             if (completion) {
-                completion(layer);
+                completion(draw);
             }
         });
         
@@ -158,8 +178,6 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CFRelease(frame);
     });
 }
-
-#pragma mark - private
 
 + (ZJTextAttributes *)combineWithAttributesArray:(NSArray<ZJTextAttributes *> *)attributesArray {
     
@@ -376,13 +394,17 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     return attributesDic;
 }
 
-+ (void)appendImageElement:(ZJTextElement *)element toEntireAttributedString:(CFMutableAttributedStringRef)entireAttributedString {
++ (void)appendAttachElement:(ZJTextElement *)element toEntireAttributedString:(CFMutableAttributedStringRef)entireAttributedString {
     
     if (!element) return;
     
+    CGSize originSize = CGSizeZero;
     UIImage *image = objc_getAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String);
-    
-    if (![image isKindOfClass:[UIImage class]]) return;
+    if (image) {
+        originSize = image.size;
+    } else if ([element.content isKindOfClass:[UIView class]]) {
+        originSize = [element.content bounds].size;
+    }
     
     //缓存图片绘制属性
     //基本属性
@@ -393,8 +415,8 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         height = attachSize.height;
         width = attachSize.width;
     } else {
-        height = [image size].height / [UIScreen mainScreen].scale;
-        width = [image size].width / [UIScreen mainScreen].scale;
+        height = originSize.height / [UIScreen mainScreen].scale;
+        width = originSize.width / [UIScreen mainScreen].scale;
     }
     
     //对齐模式
@@ -582,16 +604,13 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
 + (void)drawURLImageOnLayer:(CALayer *)layer imageURLElements:(NSArray *)imageURLElements {
     
     if (!layer || !imageURLElements.count) return;
-    
     //绘制图片
     for (ZJTextElement *imageURLElement in imageURLElements) {
-        
         //URL的图片首次会缓存
         [[SDWebImageManager sharedManager] loadImageWithURL:imageURLElement.content options:SDWebImageRetryFailed progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
             if (!error && image) {
                 NSArray *frameValueArray = imageURLElement.frameValueArray;
                 CGRect imageFrame = [[frameValueArray firstObject] CGRectValue];
-                
                 CALayer *imageLayer = [CALayer layer];
                 imageLayer.frame = imageFrame;
                 imageLayer.contents = (id)image.CGImage;
@@ -599,6 +618,19 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 [layer addSublayer:imageLayer];
             }
         }];
+    }
+}
+
++ (void)addOnView:(UIView *)view viewElements:(NSArray *)viewElements {
+    
+    if (!view || !viewElements.count) return;
+    for (ZJTextElement *viewElement in viewElements) {
+        NSArray *frameValueArray = viewElement.frameValueArray;
+        CGRect contentViewFrame = [[frameValueArray firstObject] CGRectValue];
+        UIView *contentView = viewElement.content;
+        contentView.frame = contentViewFrame;
+    
+        [view addSubview:contentView];
     }
 }
 

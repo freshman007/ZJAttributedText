@@ -89,49 +89,25 @@
     [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
     [buyButton setBackgroundColor:[UIColor orangeColor]];
     buyButton.layer.cornerRadius = 15;
+    [buyButton addTarget:self action:@selector(buyBook) forControlEvents:UIControlEventTouchUpInside];
     
     /************核心使用************/
     
-    //1. 拼接文章
+    //一次性生成文章
     
-    //标题
-    title.font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
-    //首段
-    firstPara.color(firstParaColor).align(@0);
-    //图片需要用一个空字符串起头
-    NSString *webImageString = @"".append(webImage).font(separateLineFont).minLineHeight(@100);
-    //分割线
-    separateLine.font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
-    //本地图片
-    NSString *locolImageString = @"".append(locolImage);
-    //最后一段
-    lastPara.font(lastParaFont).align(@1).maxLineHeight(@20);
-    //书名
-    bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
-    //引用线Layer
-    NSString *lineLayerString = @"".append(lineLayer).attachSize([NSValue valueWithCGSize:lineLayer.bounds.size]);
-    //引用
-    quote.color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
-    //按钮
-    NSString *buttonString = @"".append(buyButton).attachSize([NSValue valueWithCGSize:buyButton.bounds.size]).attachAlign(@0);
-    
+    @""
+    .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
+    .append(firstPara).color(firstParaColor).align(@0)
+    .append(webImage).font(separateLineFont).minLineHeight(@100)
+    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
+    .append(locolImage)
+    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
+    .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
+    .append(lineLayer).attachSize([NSValue valueWithCGSize:lineLayer.bounds.size])
+    .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
+    .append(buyButton).attachSize([NSValue valueWithCGSize:buyButton.bounds.size]).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    NSString *defaultAttributes = @"".entire()
-    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
-    
-    //拼接
-    title
-    .append(firstPara)
-    .append(webImageString)
-    .append(separateLine)
-    .append(locolImageString)
-    .append(lastPara)
-    .append(bookName)
-    .append(lineLayerString)
-    .append(quote)
-    .append(buttonString)
-    //设置默认属性
-    .append(defaultAttributes)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
     //绘制View
     .drawView(^(UIView *drawView) {
         drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
@@ -139,25 +115,52 @@
         [self.view addSubview:drawView];
     });
     
-//        //2 .一次性生成文章
-//
-//        @""
-//        .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
-//        .append(firstPara).color(firstParaColor).align(@0)
-//        .append(webImage).font(separateLineFont).minLineHeight(@100)
-//        .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
-//        .append(locolImage)
-//        .append(lastPara).font(lastParaFont).align(@1)
-//        .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
-//        .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
-//        //设置全局默认属性, 优先级低于指定属性
-//        .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
-//        //绘制View
-//        .drawView(^(UIView *drawView) {
-//            drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
-//            drawView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
-//            [self.view addSubview:drawView];
-//        });
+    //拼接文章
+    
+    //    //标题
+    //    title.font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
+    //    //首段
+    //    firstPara.color(firstParaColor).align(@0);
+    //    //图片需要用一个空字符串起头
+    //    NSString *webImageString = @"".append(webImage).font(separateLineFont).minLineHeight(@100);
+    //    //分割线
+    //    separateLine.font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
+    //    //本地图片
+    //    NSString *locolImageString = @"".append(locolImage);
+    //    //最后一段
+    //    lastPara.font(lastParaFont).align(@1).maxLineHeight(@20);
+    //    //书名
+    //    bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
+    //    //引用线Layer
+    //    NSString *lineLayerString = @"".append(lineLayer).attachSize([NSValue valueWithCGSize:lineLayer.bounds.size]);
+    //    //引用
+    //    quote.color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
+    //    //按钮
+    //    NSString *buttonString = @"".append(buyButton).attachSize([NSValue valueWithCGSize:buyButton.bounds.size]).attachAlign(@0);
+    //
+    //    //设置全局默认属性, 优先级低于指定属性
+    //    NSString *defaultAttributes = @"".entire()
+    //    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
+    //
+    //    //拼接
+    //    title
+    //    .append(firstPara)
+    //    .append(webImageString)
+    //    .append(separateLine)
+    //    .append(locolImageString)
+    //    .append(lastPara)
+    //    .append(bookName)
+    //    .append(lineLayerString)
+    //    .append(quote)
+    //    .append(buttonString)
+    //    //设置默认属性
+    //    .append(defaultAttributes)
+    //    //绘制Layer
+    //    .drawLayer(^(CALayer *drawLayer) {
+    //        drawLayer.frame = CGRectMake(27.5, 50, drawLayer.frame.size.width, drawLayer.frame.size.height);
+    //        drawLayer.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
+    //        [self.view.layer addSublayer:drawLayer];
+    //    });
 }
 
 - (void)baseFeature {
@@ -349,6 +352,16 @@
         drawView.frame = frame;
         [self.view addSubview:drawView];
     });
+}
+
+- (void)buyBook {
+    NSLog(@"%s", __func__);
+
+    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.view.layer.sublayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
+    
+    //链式语法
+    [self dotFeature];
 }
 
 @end

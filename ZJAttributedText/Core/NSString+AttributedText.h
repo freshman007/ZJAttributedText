@@ -40,7 +40,7 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 @property (nonatomic, copy) ZJTextDotLayerDrawBlock drawLayer;
 
 /**
- 绘制View, 可响应手势
+ 绘制View, 可响应手势, 若有UIView的元素建议使用此API
  */
 @property (nonatomic, copy) ZJTextDotViewDrawBlock drawView;
 
