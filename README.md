@@ -34,7 +34,7 @@
     
     //设置全局默认属性, 优先级低于指定属性
     NSString *defaultAttributes = @"".entire()
-    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).imageAlign(@1).onClicked(textOnClicked).imageSize(imageSize);
+    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
     
     //拼接
     title.append(firstPara).append(webImageString).append(separateLine).append(locolImageString).append(lastPara).append(bookName).append(quote)
@@ -62,7 +62,7 @@
     .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
     .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
     //设置默认属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).imageAlign(@1).onClicked(textOnClicked).imageSize(imageSize)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
     //绘制
     .drawView(^(UIView *drawView) {
         [self.view addSubview:drawView];
@@ -79,7 +79,7 @@
 * append(id content)
 
 		拼接
-		content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须指定imageSize属性)
+		content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须指定attachSize属性)
 
 * entire()
 
@@ -115,8 +115,8 @@
 
 ###### 图片属性
 
-* imageSize 图片尺寸, 默认为图片本身尺寸, 会根据图片缩放(2x 3x)自动调整
-* imageAlign 图片对齐模式, 0为默认, 基准线对齐. 1为居中对齐至特定字体大小 参看 ZJTextImageAlign
+* attachSize 图片尺寸, 默认为图片本身尺寸, 会根据图片缩放(2x 3x)自动调整
+* attachAlign 图片对齐模式, 0为默认, 基准线对齐. 1为居中对齐至特定字体大小 参看 ZJTextattachAlign
 
 ###### 段落属性
 

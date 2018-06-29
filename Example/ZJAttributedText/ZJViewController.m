@@ -63,8 +63,8 @@
     UIColor *quoteColor = [[UIColor grayColor] colorWithAlphaComponent:0.3];
     
     //绘制大小限制
-    NSValue *maxSize = [NSValue valueWithCGSize:CGSizeMake(325, 550)];
-    NSValue *imageSize = [NSValue valueWithCGSize:CGSizeMake(35, 35)];
+    NSValue *maxSize = [NSValue valueWithCGSize:CGSizeMake(325, MAXFLOAT)];
+    NSValue *attachSize = [NSValue valueWithCGSize:CGSizeMake(35, 35)];
     
     //内容
     NSString *title = @"随笔\n\n";
@@ -74,8 +74,21 @@
     NSString *localImagePath = [[NSBundle mainBundle] pathForResource:@"dy122" ofType:@"png"];
     UIImage *locolImage = [UIImage imageWithContentsOfFile:localImagePath];
     NSString *lastPara = @"\n我从来没想过时间会过的这么快，\n快的这五年我好像还没有认真生活，\n时间就没有了。\n没有认识新朋友，\n没有去过新景点，\n也没有吃过更新奇的食物，\n五年里没有任何值得留念的回忆。\n这本";
-    NSString *bookName = @"《云边有个小卖部》";
-    NSString *quote = @"\n\n       --他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。";
+    NSString *bookName = @"《云边有个小卖部》\n\n";
+    NSString *quote = @" 他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。\n";
+    
+    //视图
+    CALayer *lineLayer = [CALayer layer];
+    lineLayer.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5].CGColor;
+    lineLayer.frame = CGRectMake(0, 0, 15, 3);
+    lineLayer.cornerRadius = 1.5;
+    
+    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [buyButton setTitle:@"购买本书" forState:UIControlStateNormal];
+    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
+    [buyButton setBackgroundColor:[UIColor orangeColor]];
+    buyButton.layer.cornerRadius = 15;
     
     /************核心使用************/
     
@@ -92,18 +105,31 @@
     //本地图片
     NSString *locolImageString = @"".append(locolImage);
     //最后一段
-    lastPara.font(lastParaFont).align(@1);
+    lastPara.font(lastParaFont).align(@1).maxLineHeight(@20);
     //书名
-    bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1);
+    bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
+    //引用线Layer
+    NSString *lineLayerString = @"".append(lineLayer).attachSize([NSValue valueWithCGSize:lineLayer.bounds.size]);
     //引用
     quote.color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
+    //按钮
+    NSString *buttonString = @"".append(buyButton).attachSize([NSValue valueWithCGSize:buyButton.bounds.size]).attachAlign(@0);
     
     //设置全局默认属性, 优先级低于指定属性
     NSString *defaultAttributes = @"".entire()
-    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).imageAlign(@1).onClicked(textOnClicked).imageSize(imageSize);
+    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
     
     //拼接
-    title.append(firstPara).append(webImageString).append(separateLine).append(locolImageString).append(lastPara).append(bookName).append(quote)
+    title
+    .append(firstPara)
+    .append(webImageString)
+    .append(separateLine)
+    .append(locolImageString)
+    .append(lastPara)
+    .append(bookName)
+    .append(lineLayerString)
+    .append(quote)
+    .append(buttonString)
     //设置默认属性
     .append(defaultAttributes)
     //绘制View
@@ -125,7 +151,7 @@
 //        .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
 //        .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
 //        //设置全局默认属性, 优先级低于指定属性
-//        .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).imageAlign(@1).onClicked(textOnClicked).imageSize(imageSize)
+//        .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
 //        //绘制View
 //        .drawView(^(UIView *drawView) {
 //            drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
@@ -159,8 +185,8 @@
     ZJTextElement *element3 = [ZJTextElement new];
     NSString *image3Path = [[NSBundle mainBundle] pathForResource:@"dy008" ofType:@"png"];
     element3.content = [UIImage imageWithContentsOfFile:image3Path];
-//    element3.attributes.imageSize =  [NSValue valueWithCGSize:CGSizeMake(30, 30)];
-    element3.attributes.imageAlign = @(ZJTextImageAlignCenterToFont);
+//    element3.attributes.attachSize =  [NSValue valueWithCGSize:CGSizeMake(30, 30)];
+    element3.attributes.attachAlign = @(ZJTextattachAlignCenterToFont);
     element3.attributes.align = @2;
     element3.attributes.font = [UIFont systemFontOfSize:10];
     element3.attributes.minLineHeight = @100;
@@ -179,7 +205,7 @@
     ZJTextElement *element5 = [ZJTextElement new];
     NSString *localImagePath = [[NSBundle mainBundle] pathForResource:@"dy122" ofType:@"png"];
     element5.content = [UIImage imageWithContentsOfFile:localImagePath];
-    element5.attributes.imageAlign = @(ZJTextImageAlignCenterToFont);
+    element5.attributes.attachAlign = @(ZJTextattachAlignCenterToFont);
     element5.attributes.align = @2;
     element5.attributes.font = [UIFont systemFontOfSize:10];
     element5.attributes.minLineHeight = @100;
@@ -216,7 +242,7 @@
     defaultAttributes.minLineHeight = @20;
     defaultAttributes.maxLineHeight = @20;
     defaultAttributes.align = @1;
-    defaultAttributes.imageAlign = @(ZJTextImageAlignCenterToFont);
+    defaultAttributes.attachAlign = @(ZJTextattachAlignCenterToFont);
     defaultAttributes.cacheFrame = @YES;
     defaultAttributes.onClicked = ^(ZJTextElement *element) {
         NSLog(@"其他文本: %@", element.content);

@@ -7,9 +7,9 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, ZJTextImageAlign) {
-    ZJTextImageAlignBottomToBaseLine = 0,         //图片底部对齐基准线
-    ZJTextImageAlignCenterToFont                  //图片居中向特定字体对齐, 需要设置 font 属性, 若没有为系统12号字体
+typedef NS_ENUM(NSUInteger, ZJTextattachAlign) {
+    ZJTextattachAlignBottomToBaseLine = 0,         //图片底部对齐基准线
+    ZJTextattachAlignCenterToFont                  //图片居中向特定字体对齐, 需要设置 font 属性, 若没有为系统12号字体
 };
 
 @class ZJTextElement;
@@ -77,17 +77,17 @@ typedef void(^ZJTextZJTextAttributeCommonBlock)(ZJTextElement *element);
  */
 @property (nonatomic, strong) NSNumber *underline;
 
-#pragma mark - image attributes
+#pragma mark - attach attributes
 
 /**
  图片尺寸, 默认为图片本身尺寸
  */
-@property (nonatomic, strong) NSValue *imageSize;
+@property (nonatomic, strong) NSValue *attachSize;
 
 /**
- 图片对齐模式 参看 ZJTextImageAlign
+ 图片对齐模式 参看 ZJTextattachAlign
  */
-@property (nonatomic, strong) NSNumber *imageAlign;
+@property (nonatomic, strong) NSNumber *attachAlign;
 
 #pragma mark - paragraph attributes
 

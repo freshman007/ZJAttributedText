@@ -17,6 +17,7 @@
 
 static NSString *const kZJTextElementAttributeName = @"kZJTextElementAttributeName";
 static NSString *const kZJTextDrawFrameAssociateKey = @"kZJTextDrawFrameAssociateKey";
+static NSString *const kZJTextDrawImageAssociateKey = @"kZJTextDrawImageAssociateKey";
 static NSString *const kZJTextImageAscentAssociateKey = @"kZJTextImageAscentAssociateKey";
 static NSString *const kZJTextImageDescentAssociateKey = @"kZJTextImageDescentAssociateKey";
 static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssociateKey";
@@ -75,6 +76,9 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 //保存图片类的元素
                 [imageElements addObject:element];
                 
+                //保存绘制的图片
+                objc_setAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String, element.content, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                
                 //生成图片占位富文本
                 [self appendImageElement:element toEntireAttributedString:entireAttributedString];
 
@@ -84,10 +88,14 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:element.content];
                 UIImage *cachedImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:key];
                 if (cachedImage) {
-                    element.content = cachedImage;
+    
+                    //保存绘制的图片
+                    objc_setAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String, cachedImage, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                    
                     //保存图片类的元素
                     [imageElements addObject:element];
                 } else {
+                    
                     //保存图片URL类的元素
                     [imageURLElements addObject:element];
                 }
@@ -95,7 +103,22 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 //生成图片占位富文本
                 [self appendImageElement:element toEntireAttributedString:entireAttributedString];
                 
+            } else if ([element.content isKindOfClass:[UIView class]] || [element.content isKindOfClass:[CALayer class]]) {
                 
+                //CALayer转换为图片
+                UIImage *image = [self drawImageWithContent:element.content];
+                
+                if (image) {
+                    
+                    //保存绘制的图片
+                    objc_setAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String, image, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                    
+                    //保存图片类的元素
+                    [imageElements addObject:element];
+                    
+                    //生成图片占位富文本
+                    [self appendImageElement:element toEntireAttributedString:entireAttributedString];
+                }
             }
         }
         
@@ -189,6 +212,28 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     if (attributesDic) {
         CFRelease(attributesDic);
     }
+}
+
++ (UIImage *)drawImageWithContent:(id)content {
+    
+    //开启图片上下文
+    UIGraphicsBeginImageContextWithOptions([content size], NO, [UIScreen mainScreen].scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    [content setFrame:CGRectMake(0, 0, [content size].width, [content size].height)];
+    if ([content isKindOfClass:[UIView class]]) {
+        [[content layer]  renderInContext:context];
+    } else if ([content isKindOfClass:[CALayer class]]) {
+        [content renderInContext:context];
+    }
+    
+    //获取位图
+    UIImage *drawImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    //关闭上下文
+    UIGraphicsEndImageContext();
+    
+    return drawImage;
 }
 
 + (CFDictionaryRef)generateattributesDicWithElement:(ZJTextElement *)element {
@@ -333,30 +378,34 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
 
 + (void)appendImageElement:(ZJTextElement *)element toEntireAttributedString:(CFMutableAttributedStringRef)entireAttributedString {
     
-    if (!element || !([element.content isKindOfClass:[UIImage class]] || [element.content isKindOfClass:[NSURL class]])) return;
+    if (!element) return;
+    
+    UIImage *image = objc_getAssociatedObject(element, kZJTextDrawImageAssociateKey.UTF8String);
+    
+    if (![image isKindOfClass:[UIImage class]]) return;
     
     //缓存图片绘制属性
     //基本属性
     CGFloat height = 0;
     CGFloat width = 0;
-    if (element.attributes && element.attributes.imageSize) {
-        CGSize imageSize = [element.attributes.imageSize CGSizeValue];
-        height = imageSize.height;
-        width = imageSize.width;
-    } else if ([element.content isKindOfClass:[UIImage class]]) {
-        height = [element.content size].height / [UIScreen mainScreen].scale;
-        width = [element.content size].width / [UIScreen mainScreen].scale;
+    if (element.attributes && element.attributes.attachSize) {
+        CGSize attachSize = [element.attributes.attachSize CGSizeValue];
+        height = attachSize.height;
+        width = attachSize.width;
+    } else {
+        height = [image size].height / [UIScreen mainScreen].scale;
+        width = [image size].width / [UIScreen mainScreen].scale;
     }
     
     //对齐模式
     CGFloat ascent = 0;
     CGFloat descent = 0;
-    switch (element.attributes.imageAlign.integerValue) {
-        case ZJTextImageAlignBottomToBaseLine:
+    switch (element.attributes.attachAlign.integerValue) {
+        case ZJTextattachAlignBottomToBaseLine:
             ascent = height;
             break;
             
-        case ZJTextImageAlignCenterToFont: {
+        case ZJTextattachAlignCenterToFont: {
             UIFont *font = element.attributes.font ? : [UIFont systemFontOfSize:12];
             CGFloat fontAscent = fabs(font.ascender);
             CGFloat fontDescent = fabs(font.descender);
@@ -514,7 +563,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         NSArray *frameValueArray = objc_getAssociatedObject(imageElement, kZJTextDrawFrameAssociateKey.UTF8String);
         CGRect imageFrame = [[frameValueArray firstObject] CGRectValue];
         
-        UIImage *image = imageElement.content;
+        UIImage *image = objc_getAssociatedObject(imageElement, kZJTextDrawImageAssociateKey.UTF8String);
         CGContextDrawImage(context, imageFrame, image.CGImage);
     }
     

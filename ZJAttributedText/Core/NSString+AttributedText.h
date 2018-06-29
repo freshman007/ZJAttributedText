@@ -25,7 +25,7 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 #pragma mark - core method
 
 /**
- 拼接字符串
+ 拼接字符串, 可以是 文本(NSString)/图片(UIImage)/网络图片(NSURL)/自定义视图(CALayer/UIView)
  */
 @property (nonatomic, copy) ZJTextDotAppendBlock append;
 
@@ -103,17 +103,17 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
  */
 @property (nonatomic, copy) ZJTextDotNumberBlock underline;
 
-#pragma mark - image attributes
+#pragma mark - attach attributes
 
 /**
  图片尺寸, 默认为图片本身尺寸
  */
-@property (nonatomic, copy) ZJTextDotValueBlock imageSize;
+@property (nonatomic, copy) ZJTextDotValueBlock attachSize;
 
 /**
- 图片对齐模式 参看 ZJTextImageAlign
+ 图片对齐模式 参看 ZJTextattachAlign
  */
-@property (nonatomic, copy) ZJTextDotNumberBlock imageAlign;
+@property (nonatomic, copy) ZJTextDotNumberBlock attachAlign;
 
 #pragma mark - paragraph attributes
 
