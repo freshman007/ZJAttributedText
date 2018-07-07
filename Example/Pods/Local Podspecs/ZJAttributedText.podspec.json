@@ -18,8 +18,7 @@
   "platforms": {
     "ios": "8.0"
   },
-  "public_header_files": "ZJAttributedText/Classes/ZJAttributedText.h, ZJAttributedText/Classes/Core/NSString+AttributedText.h, ZJAttributedText/Classes/Model/ZJTextAttributes.h, ZJAttributedText/Model/ZJTextElement.h",
-  "source_files": "ZJAttributedText/Classes/**/*.{h,m}",
+  "source_files": "ZJAttributedText/ZJAttributedText.h, ZJAttributedText/Core/*.{h,m}, ZJAttributedText/Model/*.{h,m}, ZJAttributedText/View/*.{h,m}",
   "dependencies": {
     "SDWebImage": [
 
