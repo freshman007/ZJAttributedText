@@ -2,17 +2,19 @@
 //  NSString+AttributedText.h
 //  ZJAttributedText
 //
-//  Created by Zj on 2018/6/23.
+//  Created by Syik on 2018/6/23.
 //
 
 #import <Foundation/Foundation.h>
-#import "ZJTextAttributes.h"
 
+@class ZJTextElement;
+
+typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 typedef NSString *(^ZJTextDotFontBlock)(UIFont *font);
 typedef NSString *(^ZJTextDotColorBlock)(UIColor *color);
 typedef NSString *(^ZJTextDotValueBlock)(NSValue *value);
 typedef NSString *(^ZJTextDotNumberBlock)(NSNumber *number);
-typedef NSString *(^ZJTextDotBlockBlock)(ZJTextZJTextAttributeCommonBlock block);
+typedef NSString *(^ZJTextDotBlockBlock)(ZJTextReturnBlock block);
 typedef NSString *(^ZJTextDotAppendBlock)(id content);
 typedef NSString *(^ZJTextDotEntireBlock)(void);
 typedef void(^ZJTextLayerDrawCompletionBlock)(CALayer *drawLayer);
@@ -35,12 +37,12 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 @property (nonatomic, copy) ZJTextDotEntireBlock entire;
 
 /**
- 绘制layer, 无法响应手势
+ 绘制layer, 无法响应手势, 当绘制内容中存在UIView时建议不使用此API
  */
 @property (nonatomic, copy) ZJTextDotLayerDrawBlock drawLayer;
 
 /**
- 绘制View, 可响应手势, 若有UIView的元素建议使用此API
+ 绘制View, 可响应手势, 一般建议使用此API生成视图
  */
 @property (nonatomic, copy) ZJTextDotViewDrawBlock drawView;
 

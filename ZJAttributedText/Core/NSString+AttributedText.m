@@ -2,7 +2,7 @@
 //  NSString+AttributedText.m
 //  ZJAttributedText
 //
-//  Created by Zj on 2018/6/23.
+//  Created by Syik on 2018/6/23.
 //
 
 #import "NSString+AttributedText.h"
@@ -172,14 +172,14 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 }
 
 - (ZJTextDotBlockBlock)onClicked {
-    return ^(ZJTextZJTextAttributeCommonBlock block) {
+    return ^(ZJTextReturnBlock block) {
         [self setAssociate:self attribute:block forKey:@"onClicked"];
         return self;
     };
 }
 
 - (ZJTextDotBlockBlock)onLayout {
-    return ^(ZJTextZJTextAttributeCommonBlock block) {
+    return ^(ZJTextReturnBlock block) {
         [self setAssociate:self attribute:block forKey:@"onLayout"];
         return self;
     };

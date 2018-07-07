@@ -14,7 +14,7 @@ typedef NS_ENUM(NSUInteger, ZJTextattachAlign) {
 
 @class ZJTextElement;
 
-typedef void(^ZJTextZJTextAttributeCommonBlock)(ZJTextElement *element);
+typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 
 @interface ZJTextAttributes : NSObject
 
@@ -28,12 +28,12 @@ typedef void(^ZJTextZJTextAttributeCommonBlock)(ZJTextElement *element);
 /**
  点击Block
  */
-@property (nonatomic, copy) ZJTextZJTextAttributeCommonBlock onClicked;
+@property (nonatomic, copy) ZJTextReturnBlock onClicked;
 
 /**
  显示后会调用, 整段富文本设置其中一个元素即可
  */
-@property (nonatomic, copy) ZJTextZJTextAttributeCommonBlock onLayout;
+@property (nonatomic, copy) ZJTextReturnBlock onLayout;
 
 /**
  是否缓存frame, 会计算文本在整段富文本中的frame
