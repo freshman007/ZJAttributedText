@@ -16,6 +16,7 @@
 #import "ZJTextElement.h"
 #import "ZJTextLayer.h"
 #import "ZJTextView.h"
+#import "ZJAttributedText.h"
 
 FOUNDATION_EXPORT double ZJAttributedTextVersionNumber;
 FOUNDATION_EXPORT const unsigned char ZJAttributedTextVersionString[];
