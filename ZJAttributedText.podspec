@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/syik/ZJAttributedText.git', :tag => s.version.to_s }
   s.ios.deployment_target = '8.0'
 
-  s.public_header_files = 'ZJAttributedText/**/*/ZJAttributedText.h, ZJAttributedText/**/*/NSString+AttributedText.h, ZJAttributedText/**/*/ZJTextAttributes.h, ZJAttributedText/Model/ZJTextElement.h'
+  s.public_header_files = 'ZJAttributedText/**/*.h'
   s.source_files = 'ZJAttributedText/**/*.{h,m}'
 
   s.dependency 'SDWebImage'
