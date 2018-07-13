@@ -92,9 +92,14 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 #pragma mark - paragraph attributes
 
 /**
- 绘制的约束尺寸, 默认Max
+ * 整段文本属性 *: 绘制的约束尺寸, 默认Max
  */
 @property (nonatomic, strong) NSValue *maxSize;
+
+/**
+ * 整段文本属性 *: 阴影属性, 单独设置在某一段字符串无效
+ */
+@property (nonatomic, strong) NSShadow *shadow;
 
 /**
  最小行间距
@@ -122,7 +127,7 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 @property (nonatomic, strong) NSNumber *align;
 
 /**
- 对齐, 整形, 参考 NSLineBreakMode
+ 对齐, 整形, 参考 CTLineBreakMode
  */
 @property (nonatomic, strong) NSNumber *lineBreakMode;
 
