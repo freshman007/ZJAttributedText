@@ -54,6 +54,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         NSMutableArray *imageElements = [NSMutableArray array];
         NSMutableArray *imageURLElements = [NSMutableArray array];
         NSMutableArray *viewElements = [NSMutableArray array];
+        ZJTextAttributes *tempDefaultAttributes = defaultAttributes;
         
         for (ZJTextElement *element in elements) {
             
@@ -63,11 +64,11 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
             }
             
             //合并全局属性至元素属性
-            if (defaultAttributes) {
-                ZJTextAttributes *combineAttributes = [self combineWithAttributesArray:@[element.attributes, defaultAttributes]];
+            if (tempDefaultAttributes) {
+                ZJTextAttributes *combineAttributes = [self combineWithAttributesArray:@[element.attributes, tempDefaultAttributes]];
                 element.attributes = combineAttributes;
             } else if (elements.count == 1) {
-                defaultAttributes = element.attributes;
+                tempDefaultAttributes = element.attributes;
             }
             
             //拼接字符串
@@ -136,7 +137,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         
         //创建CoreText相关抽象
         CTFramesetterRef frameSetter = CTFramesetterCreateWithAttributedString(entireAttributedString);
-        CGSize defaultParagraphSize = [defaultAttributes.maxSize CGSizeValue];
+        CGSize defaultParagraphSize = [tempDefaultAttributes.maxSize CGSizeValue];
         CGSize paragraphSize = CGSizeEqualToSize(defaultParagraphSize, CGSizeZero) ? CGSizeMake(MAXFLOAT, MAXFLOAT) : defaultParagraphSize;
         
         //试算
@@ -149,7 +150,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, length), path, NULL);
         
         //绘制图片
-        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size shadow:defaultAttributes.shadow];
+        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size shadow:tempDefaultAttributes.shadow];
         
         //主线程生成Layer
         dispatch_async(dispatch_get_main_queue(), ^{
