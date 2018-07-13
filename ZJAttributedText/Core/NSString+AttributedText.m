@@ -38,6 +38,7 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 @dynamic attachSize;
 @dynamic attachAlign;
 @dynamic maxSize;
+@dynamic shadow;
 @dynamic minLineSpace;
 @dynamic maxLineSpace;
 @dynamic minLineHeight;
@@ -251,6 +252,13 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 - (ZJTextDotValueBlock)maxSize {
     return ^(NSValue *value) {
         [self setAssociate:self attribute:value forKey:@"maxSize"];
+        return self;
+    };
+}
+
+- (ZJTextDotShadowBlock)shadow {
+    return ^(NSShadow *shadow) {
+        [self setAssociate:self attribute:shadow forKey:@"shadow"];
         return self;
     };
 }

@@ -14,6 +14,7 @@ typedef NSString *(^ZJTextDotFontBlock)(UIFont *font);
 typedef NSString *(^ZJTextDotColorBlock)(UIColor *color);
 typedef NSString *(^ZJTextDotValueBlock)(NSValue *value);
 typedef NSString *(^ZJTextDotNumberBlock)(NSNumber *number);
+typedef NSString *(^ZJTextDotShadowBlock)(NSShadow *shadow);
 typedef NSString *(^ZJTextDotBlockBlock)(ZJTextReturnBlock block);
 typedef NSString *(^ZJTextDotAppendBlock)(id content);
 typedef NSString *(^ZJTextDotEntireBlock)(void);
@@ -120,9 +121,14 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 #pragma mark - paragraph attributes
 
 /**
- 绘制的约束尺寸, 默认Max
+ * 整段文本属性 *: 绘制的约束尺寸, 默认Max
  */
 @property (nonatomic, copy) ZJTextDotValueBlock maxSize;
+
+/**
+ * 整段文本属性 *: 阴影属性, 单独设置在某一段字符串无效
+ */
+@property (nonatomic, copy) ZJTextDotShadowBlock shadow;
 
 /**
  最小行间距

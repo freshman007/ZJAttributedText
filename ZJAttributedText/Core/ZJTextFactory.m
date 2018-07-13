@@ -147,7 +147,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, length), path, NULL);
         
         //绘制图片
-        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size];
+        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size shadow:defaultAttributes.shadow];
         
         //主线程生成Layer
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -565,7 +565,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     }
 }
 
-+ (UIImage *)drawBitmapWithTextFrame:(CTFrameRef)frame imageElements:(NSArray<ZJTextElement *> *)imageElements inSize:(CGSize)size {
++ (UIImage *)drawBitmapWithTextFrame:(CTFrameRef)frame imageElements:(NSArray<ZJTextElement *> *)imageElements inSize:(CGSize)size shadow:(NSShadow *)shadow {
     
     //开启图片上下文
     UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
@@ -587,6 +587,11 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         
         UIImage *image = objc_getAssociatedObject(imageElement, kZJTextDrawImageAssociateKey.UTF8String);
         CGContextDrawImage(context, imageFrame, image.CGImage);
+    }
+    
+    if (shadow) {
+        NSAssert([shadow.shadowColor isKindOfClass:[UIColor class]], @"shadow color is not UIColor class");
+        CGContextSetShadowWithColor(context, shadow.shadowOffset, shadow.shadowBlurRadius, [shadow.shadowColor CGColor]);
     }
     
     //绘制文本

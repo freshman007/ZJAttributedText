@@ -90,6 +90,10 @@
     NSString *bookName = @"《云边有个小卖部》\n\n";
     NSString *quote = @" 他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。\n";
     
+    //阴影
+    NSShadow *shadow = [NSShadow new];
+    shadow.shadowBlurRadius = 4;
+    shadow.shadowColor = [UIColor redColor];
     /************核心使用************/
     
     //一次性生成文章
@@ -106,7 +110,7 @@
     .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
     .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow)
     //绘制View
     .drawView(^(UIView *drawView) {
         drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
