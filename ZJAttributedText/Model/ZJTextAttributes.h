@@ -97,9 +97,14 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 @property (nonatomic, strong) NSValue *maxSize;
 
 /**
- * 整段文本属性 *: 阴影属性, 单独设置在某一段字符串无效, 仅仅设置在 entire 后才生效.
+ * 整段文本属性 *: 阴影属性, 单独设置在某一段字符串无效
  */
 @property (nonatomic, strong) NSShadow *shadow;
+
+/**
+ * 整段文本属性 *: 期望高度, 设置本属性后绘制结果会以此高度居中
+ */
+@property (nonatomic, strong) NSNumber *preferHeight;
 
 /**
  最小行间距

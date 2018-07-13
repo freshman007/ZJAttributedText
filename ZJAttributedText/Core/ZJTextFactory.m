@@ -158,8 +158,10 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
             ZJTextLayer *layer = [ZJTextLayer layer];
             [self drawURLImageOnLayer:layer imageURLElements:imageURLElements];
             layer.elements = elements;
-            layer.frame = CGRectMake(0, 0, size.width, size.height);
+            CGFloat height = tempDefaultAttributes.preferHeight ? tempDefaultAttributes.preferHeight.floatValue : size.height;
+            layer.frame = CGRectMake(0, 0, size.width, height);
             layer.contents = (__bridge id)drawImage.CGImage;
+            layer.contentsGravity = kCAGravityResizeAspect;
 
             id draw = layer;
             if (type == ZJTextDrawTypeView) {

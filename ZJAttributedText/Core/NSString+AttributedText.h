@@ -126,9 +126,14 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 @property (nonatomic, copy) ZJTextDotValueBlock maxSize;
 
 /**
- * 整段文本属性 *: 阴影属性, 单独设置在某一段字符串无效
+ * 整段文本属性 *: 阴影属性, 在 entire() 后生效, 或仅有一段文字生效
  */
 @property (nonatomic, copy) ZJTextDotShadowBlock shadow;
+
+/**
+ * 整段文本属性 *: 期望高度, 设置本属性后绘制结果会以此高度居中, 在 entire() 后生效, 或仅有一段文字生效
+ */
+@property (nonatomic, copy) ZJTextDotNumberBlock preferHeight;
 
 /**
  最小行间距
