@@ -147,14 +147,18 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
         }
         
         if (realContent) {
-            //生成对应元素
-            ZJTextElement *element = [ZJTextElement new];
-            element.content = realContent;
-            NSDictionary *attibutesDic = [self getAssociateAttributes:content];
-            for (NSString *key in attibutesDic) {
-                [element.attributes setValue:attibutesDic[key] forKey:key];
+            BOOL isNotString = ![realContent isKindOfClass:[NSString class]];
+            BOOL isNonEmptyString = [realContent isKindOfClass:[NSString class]] && [realContent length];
+            if (isNonEmptyString || isNotString ) {
+                //生成对应元素
+                ZJTextElement *element = [ZJTextElement new];
+                element.content = realContent;
+                NSDictionary *attibutesDic = [self getAssociateAttributes:content];
+                for (NSString *key in attibutesDic) {
+                    [element.attributes setValue:attibutesDic[key] forKey:key];
+                }
+                [elements insertObject:element atIndex:0];
             }
-            [elements insertObject:element atIndex:0];
         }
         content = objc_getAssociatedObject(content, kZJTextStringContextAssociateKey.UTF8String);
     }
