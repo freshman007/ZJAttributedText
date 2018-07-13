@@ -54,7 +54,6 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         NSMutableArray *imageElements = [NSMutableArray array];
         NSMutableArray *imageURLElements = [NSMutableArray array];
         NSMutableArray *viewElements = [NSMutableArray array];
-        NSShadow *shadow = defaultAttributes.shadow ? : (elements.count == 1 ? [[[elements firstObject] attributes] shadow] : nil);
         
         for (ZJTextElement *element in elements) {
             
@@ -67,6 +66,8 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
             if (defaultAttributes) {
                 ZJTextAttributes *combineAttributes = [self combineWithAttributesArray:@[element.attributes, defaultAttributes]];
                 element.attributes = combineAttributes;
+            } else if (elements.count == 1) {
+                defaultAttributes = element.attributes;
             }
             
             //拼接字符串
@@ -148,7 +149,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, length), path, NULL);
         
         //绘制图片
-        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size shadow:shadow];
+        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size shadow:defaultAttributes.shadow];
         
         //主线程生成Layer
         dispatch_async(dispatch_get_main_queue(), ^{
