@@ -15,34 +15,48 @@
 ```ObjectiveC
 //...省略常量声明
 
+//拼接文章
 //标题
-title.font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
+NSString *titleString = TextBuild.append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
 //首段
-firstPara.color(firstParaColor).align(@0);
+NSString *firstParaString = TextBuild.append(firstPara).color(firstParaColor).align(@0);
 //图片需要用一个空字符串起头
-NSString *webImageString = @"".append(webImageURL).font(separateLineFont).minLineHeight(@100);
+NSString *webImageString = TextBuild.append(webImage).font(separateLineFont).minLineHeight(@100);
 //分割线
-separateLine.font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
+NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30);
 //本地图片
-NSString *locolImageString = @"".append(locolImage);
+NSString *locolImageString = TextBuild.append(locolImage).padding(@30);
 //最后一段
-lastPara.font(lastParaFont).align(@1);
+NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20);
 //书名
-bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1);
+NSString *bookNameString = TextBuild.append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
+//引用线Layer
+NSString *lineLayerString = TextBuild.append(lineLayer).attachSize(lineLayerSize);
 //引用
-quote.color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
+NSString *quoteString = TextBuild.append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
+//按钮
+NSString *buttonString = TextBuild.append(buyButton).attachSize(buyButtonSize).attachAlign(@0);
 
 //设置全局默认属性, 优先级低于指定属性
-NSString *defaultAttributes = @"".entire()
-.maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
+NSString *defaultAttributes = TextBuild.entire()
+.maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).preferHeight(@(preferHeigt));
 
 //拼接
-title.append(firstPara).append(webImageString).append(separateLine).append(locolImageString).append(lastPara).append(bookName).append(quote)
+titleString
+.append(firstParaString)
+.append(webImageString)
+.append(separateLineString)
+.append(locolImageString)
+.append(lastParaString)
+.append(bookNameString)
+.append(lineLayerString)
+.append(quoteString)
+.append(buttonString)
 //设置默认属性
 .append(defaultAttributes)
-//绘制View
-.drawView(^(UIView *drawView) {
-[self.view addSubview:drawView];
+//绘制Layer
+.drawLayer(^(CALayer *drawLayer) {
+[self.view.layer addSublayer:drawLayer];
 });
 ```
 
@@ -51,23 +65,23 @@ title.append(firstPara).append(webImageString).append(separateLine).append(locol
 ```ObjectiveC
 //...省略常量声明
 
-@""
-//拼接全文
+TextBuild
 .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
 .append(firstPara).color(firstParaColor).align(@0)
-.append(webImageURL).font(separateLineFont).minLineHeight(@100)
-.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
-.append(locolImage)
-.append(lastPara).font(lastParaFont).align(@1)
+.append(webImage).font(separateLineFont).minLineHeight(@100)
+.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30)
+.append(locolImage).padding(@30)
+.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
 .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
+.append(lineLayer).attachSize(lineLayerSize)
 .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
-//设置默认属性
-.entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).maxLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
-//绘制
+.append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
+//设置全局默认属性, 优先级低于指定属性
+.entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).preferHeight(@(preferHeigt)).cornerRadius(@50).backgroundLayer(gradientLayer)
+//绘制View
 .drawView(^(UIView *drawView) {
 [self.view addSubview:drawView];
 });
-
 ```
 
 ## 核心方法与属性
@@ -99,6 +113,7 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 ##### 通用属性
 
 * verticalOffset 垂直偏移
+* padding 与前一段之间的间距
 * onClicked 点击回调
 * onLayout 展示回调
 * cacheFrame 缓存该段文本绘制位置
@@ -204,4 +219,3 @@ Jsoul1227@hotmail.com
 ## 许可证
 
 ZJAttributedText is available under the MIT license. See the LICENSE file for more info.
-

@@ -20,10 +20,10 @@
     [super viewDidLoad];
 
     //链式语法
-//    [self dotFeature];
+    [self dotFeature];
     
     //链式语法组合
-    [self dotCombineFeature];
+    //[self dotCombineFeature];
     
     //性能测试
     //[self performanceTest];
@@ -113,8 +113,8 @@
     .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
     .append(firstPara).color(firstParaColor).align(@0)
     .append(webImage).font(separateLineFont).minLineHeight(@100)
-    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
-    .append(locolImage)
+    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30)
+    .append(locolImage).padding(@30)
     .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
     .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
     .append(lineLayer).attachSize(lineLayerSize)
@@ -214,9 +214,9 @@
     //图片需要用一个空字符串起头
     NSString *webImageString = TextBuild.append(webImage).font(separateLineFont).minLineHeight(@100);
     //分割线
-    NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
+    NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30);
     //本地图片
-    NSString *locolImageString = TextBuild.append(locolImage);
+    NSString *locolImageString = TextBuild.append(locolImage).padding(@30);
     //最后一段
     NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20);
     //书名

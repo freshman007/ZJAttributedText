@@ -26,6 +26,11 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 @property (nonatomic, strong) NSNumber *verticalOffset;
 
 /**
+ 距离前一段的距离
+ */
+@property (nonatomic, strong) NSNumber *padding;
+
+/**
  点击Block
  */
 @property (nonatomic, copy) ZJTextReturnBlock onClicked;

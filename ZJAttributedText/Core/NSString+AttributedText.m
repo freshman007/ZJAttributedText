@@ -180,6 +180,13 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
     };
 }
 
+- (ZJTextDotNumberBlock)padding {
+    return ^(NSNumber *number) {
+        [self setAssociate:self attribute:number forKey:@"padding"];
+        return self;
+    };
+}
+
 - (ZJTextDotBlockBlock)onClicked {
     return ^(ZJTextReturnBlock block) {
         [self setAssociate:self attribute:block forKey:@"onClicked"];

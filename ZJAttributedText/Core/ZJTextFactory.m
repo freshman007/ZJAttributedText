@@ -71,6 +71,23 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 tempDefaultAttributes = element.attributes;
             }
             
+            //处理元素间的padding
+            if (element.attributes.padding) {
+                
+                ZJTextElement *placeHolderElement = [ZJTextElement new];
+                placeHolderElement.content = [UIImage new];
+                placeHolderElement.attributes.attachSize = [NSValue valueWithCGSize:CGSizeMake(element.attributes.padding.floatValue, 1)];
+                
+                //保存图片类的元素
+                [imageElements addObject:placeHolderElement];
+                
+                //保存绘制的图片
+                objc_setAssociatedObject(placeHolderElement, kZJTextDrawImageAssociateKey.UTF8String, placeHolderElement.content, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                
+                //生成图片占位富文本
+                [self appendAttachElement:placeHolderElement toEntireAttributedString:entireAttributedString];
+            }
+            
             //拼接字符串
             if ([element.content isKindOfClass:[NSString class]]) {
                 

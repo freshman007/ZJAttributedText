@@ -58,6 +58,11 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 @property (nonatomic, copy) ZJTextDotNumberBlock verticalOffset;
 
 /**
+ 与前一段文本的间距
+ */
+@property (nonatomic, copy) ZJTextDotNumberBlock padding;
+
+/**
  点击Block
  */
 @property (nonatomic, copy) ZJTextDotBlockBlock onClicked;
