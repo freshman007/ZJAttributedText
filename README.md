@@ -8,9 +8,35 @@
 
 ## 示例说明
 
-![](http://osnabh9h1.bkt.clouddn.com/18-6-28/77389949.jpg)
+![](http://osnabh9h1.bkt.clouddn.com/18-7-14/84938943.jpg)
 
-如图所示一篇图文混排, 涉及到字体, 颜色, 字间距, 行间距, 图片对齐, 文字对齐, 描边等等属性, 还有网络图片与本地图片混排, 手势响应等需求, 使用本框架可以下面这样实现:
+如图所示一篇图文混排, 涉及到字体, 颜色, 字间距, 行间距, 图片对齐, 文字对齐, 描边, 阴影等等属性, 还有网络图片与本地图片的混排, 手势响应, View 与 Layer 的混排, 输出视图需要渐变色背景, 指定高度, 内间距, 圆角等等要求, 算是一个相当复杂的图文混排场景了, 不论使用 TextKit / CoreText 都需要相当的代码量.
+
+如果本框架可以下面这样实现:
+
+```ObjectiveC
+//...省略常量声明
+
+TextBuild
+.append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
+.append(firstPara).color(firstParaColor).align(@0)
+.append(webImage).font(separateLineFont).minLineHeight(@100)
+.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30)
+.append(locolImage).horizontalOffset(@30)
+.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
+.append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
+.append(lineLayer).attachSize(lineLayerSize)
+.append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
+.append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
+//设置全局默认属性, 优先级低于指定属性
+.entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
+//绘制View
+.drawView(^(UIView *drawView) {
+[self.view addSubview:drawView];
+});
+```
+
+而在实际需求中也可以根据不同条件对 NSString 进行组合, 最后绘制:
 
 ```ObjectiveC
 //...省略常量声明
@@ -42,7 +68,8 @@ NSString *defaultAttributes = TextBuild.entire()
 .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight));
 
 //拼接
-titleString
+TextBuild
+.append(titleString)
 .append(firstParaString)
 .append(webImageString)
 .append(separateLineString)
@@ -57,30 +84,6 @@ titleString
 //绘制Layer
 .drawLayer(^(CALayer *drawLayer) {
 [self.view.layer addSublayer:drawLayer];
-});
-```
-
-甚至可以这样实现:
-
-```ObjectiveC
-//...省略常量声明
-
-TextBuild
-.append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
-.append(firstPara).color(firstParaColor).align(@0)
-.append(webImage).font(separateLineFont).minLineHeight(@100)
-.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30)
-.append(locolImage).horizontalOffset(@30)
-.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
-.append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
-.append(lineLayer).attachSize(lineLayerSize)
-.append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
-.append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
-//设置全局默认属性, 优先级低于指定属性
-.entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
-//绘制View
-.drawView(^(UIView *drawView) {
-[self.view addSubview:drawView];
 });
 ```
 
@@ -161,14 +164,14 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 NSString *string = nil;
 string.color([UIColor whiteColor]).append(@"test").....
 ```
-声明了一个变量字符串, 但该字符串为 nil (或实际类型不为字符串), 编译器无法检查实际类型, 所以也可以使用本框架 API, 但实际代码走到这里会出现 ==Crash==.
+声明了一个变量字符串, 但该字符串为 nil (或实际类型不为字符串), 编译器无法检查实际类型, 所以也可以使用本框架 API, 但实际代码走到这里会出现 Crash.
 
-所以强烈建议字符串操作起始以 `@""` 起头, 或外部判断是否存在, 如下:
+所以强烈建议字符串操作起始以 `TextBuild`(实际就是`@""`) 起头, 或外部判断是否存在, 如下:
 
 ```ObjectiveC
 //一个变量字符串
 NSString *string = nil;
-@"".append(string).color([UIColor whiteColor]).append(@"test").....
+TextBuild.append(string).color([UIColor whiteColor]).append(@"test").....
 ```
 除此以外, 其他 API 不论怎么传异常值均能保证正常, 仅仅会跳过异常字符串或属性.
 
@@ -221,4 +224,3 @@ Jsoul1227@hotmail.com
 ## 许可证
 
 ZJAttributedText is available under the MIT license. See the LICENSE file for more info.
-

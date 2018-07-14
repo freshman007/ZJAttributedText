@@ -10,6 +10,8 @@
 #import "ZJAttributedText.h"
 #import "ZJTestLabel.h"
 
+#define RGBHex(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
 @interface ZJViewController ()
 
 @end
@@ -49,27 +51,28 @@
     
     //字体与颜色
     UIFont *titleFont = [UIFont boldSystemFontOfSize:20];
-    UIColor *titleColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
-    UIColor *firstParaColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    UIFont *separateLineFont =[UIFont systemFontOfSize:15];
-    UIColor *separateLineColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.7];
+    UIColor *titleColor = [UIColor whiteColor];
+    UIColor *firstParaColor = RGBHex(0xf5eee6);
+    UIFont *separateLineFont = [UIFont boldSystemFontOfSize:15];
+    UIColor *separateLineColor = RGBHex(0x216583);
     UIFont *lastParaFont = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+    UIColor *lastParaColor = RGBHex(0x0d7e83);
     UIFont *bookNameFont = [UIFont boldSystemFontOfSize:22];
-    UIColor *bookNameColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    UIColor *quoteColor = [[UIColor grayColor] colorWithAlphaComponent:0.3];
+    UIColor *bookNameColor = RGBHex(0xf76262);
+    UIColor *quoteColor = RGBHex(0xfab2ac);
     
     //Layer
     CALayer *lineLayer = [CALayer layer];
-    lineLayer.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.3].CGColor;
+    lineLayer.backgroundColor = RGBHex(0xf6f6f6).CGColor;
     lineLayer.frame = CGRectMake(0, 0, 15, 3);
     lineLayer.cornerRadius = 1.5;
     
     //View
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton setTitle:@"购买本书" forState:UIControlStateNormal];
-    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buyButton setTitleColor:RGBHex(0xffe2e2) forState:UIControlStateNormal];
     [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
-    [buyButton setBackgroundColor:[UIColor orangeColor]];
+    [buyButton setBackgroundColor:RGBHex(0xbad7df)];
     buyButton.layer.cornerRadius = 15;
     [buyButton addTarget:self action:@selector(buyBook) forControlEvents:UIControlEventTouchUpInside];
     
@@ -93,15 +96,16 @@
     //阴影
     NSShadow *shadow = [NSShadow new];
     shadow.shadowBlurRadius = 4;
-    shadow.shadowColor = [[UIColor blueColor] colorWithAlphaComponent:0.6];
+    shadow.shadowColor = RGBHex(0x99ddcc);
     
     //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
     CGFloat preferHeight = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
-    UIColor *backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.3];
+    UIColor *backgroundColor1 = RGBHex(0Xbad7df);
+    UIColor *backgroundColor2 = RGBHex(0Xffe2e2);
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[[UIColor orangeColor] colorWithAlphaComponent:0.05].CGColor];
+    gradientLayer.colors = @[(__bridge id)backgroundColor1.CGColor, (__bridge id)backgroundColor2.CGColor];
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(0, 1);
     
@@ -115,7 +119,7 @@
     .append(webImage).font(separateLineFont).minLineHeight(@100)
     .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30)
     .append(locolImage).horizontalOffset(@30)
-    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
+    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20).color(lastParaColor)
     .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
     .append(lineLayer).attachSize(lineLayerSize)
     .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
@@ -130,7 +134,6 @@
 }
 
 - (void)dotCombineFeature {
-    
     
     /************常量生成************/
     
@@ -150,27 +153,28 @@
     
     //字体与颜色
     UIFont *titleFont = [UIFont boldSystemFontOfSize:20];
-    UIColor *titleColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
-    UIColor *firstParaColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    UIFont *separateLineFont =[UIFont systemFontOfSize:15];
-    UIColor *separateLineColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.7];
+    UIColor *titleColor = [UIColor whiteColor];
+    UIColor *firstParaColor = RGBHex(0xf5eee6);
+    UIFont *separateLineFont = [UIFont boldSystemFontOfSize:15];
+    UIColor *separateLineColor = RGBHex(0x216583);
     UIFont *lastParaFont = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+    UIColor *lastParaColor = RGBHex(0x0d7e83);
     UIFont *bookNameFont = [UIFont boldSystemFontOfSize:22];
-    UIColor *bookNameColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    UIColor *quoteColor = [[UIColor grayColor] colorWithAlphaComponent:0.3];
+    UIColor *bookNameColor = RGBHex(0xf76262);
+    UIColor *quoteColor = RGBHex(0xfab2ac);
     
     //Layer
     CALayer *lineLayer = [CALayer layer];
-    lineLayer.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5].CGColor;
+    lineLayer.backgroundColor = RGBHex(0xf6f6f6).CGColor;
     lineLayer.frame = CGRectMake(0, 0, 15, 3);
     lineLayer.cornerRadius = 1.5;
     
     //View
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton setTitle:@"购买本书" forState:UIControlStateNormal];
-    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buyButton setTitleColor:RGBHex(0xffe2e2) forState:UIControlStateNormal];
     [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
-    [buyButton setBackgroundColor:[UIColor orangeColor]];
+    [buyButton setBackgroundColor:RGBHex(0xbad7df)];
     buyButton.layer.cornerRadius = 15;
     [buyButton addTarget:self action:@selector(buyBook) forControlEvents:UIControlEventTouchUpInside];
     
@@ -194,15 +198,16 @@
     //阴影
     NSShadow *shadow = [NSShadow new];
     shadow.shadowBlurRadius = 4;
-    shadow.shadowColor = [UIColor redColor];
+    shadow.shadowColor = RGBHex(0x99ddcc);
     
     //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
     CGFloat preferHeight = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
-    UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    UIColor *backgroundColor1 = RGBHex(0Xbad7df);
+    UIColor *backgroundColor2 = RGBHex(0Xffe2e2);
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[[UIColor orangeColor] colorWithAlphaComponent:0.05].CGColor];
+    gradientLayer.colors = @[(__bridge id)backgroundColor1.CGColor, (__bridge id)backgroundColor2.CGColor];
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(0, 1);
     
@@ -218,7 +223,7 @@
     //本地图片
     NSString *locolImageString = TextBuild.append(locolImage).horizontalOffset(@30);
     //最后一段
-    NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20);
+    NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20).color(lastParaColor);
     //书名
     NSString *bookNameString = TextBuild.append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
     //引用线Layer

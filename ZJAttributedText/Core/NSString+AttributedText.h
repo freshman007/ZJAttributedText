@@ -194,7 +194,7 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 @property (nonatomic, copy) ZJTextDotNumberBlock align;
 
 /**
- 对齐, 整形, 参考 NSLineBreakMode
+ 对齐, 整形, 参考 CTLineBreakMode
  */
 @property (nonatomic, copy) ZJTextDotNumberBlock lineBreakMode;
 

@@ -34,6 +34,7 @@
 
 - (void)setDrawLayer:(CALayer *)drawLayer {
     _drawLayer = drawLayer;
+    drawLayer.zPosition = -1;
     
     [self.layer addSublayer:_drawLayer];
 }
