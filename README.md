@@ -23,9 +23,9 @@ NSString *firstParaString = TextBuild.append(firstPara).color(firstParaColor).al
 //图片需要用一个空字符串起头
 NSString *webImageString = TextBuild.append(webImage).font(separateLineFont).minLineHeight(@100);
 //分割线
-NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30);
+NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30);
 //本地图片
-NSString *locolImageString = TextBuild.append(locolImage).padding(@30);
+NSString *locolImageString = TextBuild.append(locolImage).horizontalOffset(@30);
 //最后一段
 NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20);
 //书名
@@ -39,7 +39,7 @@ NSString *buttonString = TextBuild.append(buyButton).attachSize(buyButtonSize).a
 
 //设置全局默认属性, 优先级低于指定属性
 NSString *defaultAttributes = TextBuild.entire()
-.maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).preferHeight(@(preferHeigt));
+.maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight));
 
 //拼接
 titleString
@@ -69,15 +69,15 @@ TextBuild
 .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
 .append(firstPara).color(firstParaColor).align(@0)
 .append(webImage).font(separateLineFont).minLineHeight(@100)
-.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30)
-.append(locolImage).padding(@30)
+.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30)
+.append(locolImage).horizontalOffset(@30)
 .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
 .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
 .append(lineLayer).attachSize(lineLayerSize)
 .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
 .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
 //设置全局默认属性, 优先级低于指定属性
-.entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).preferHeight(@(preferHeigt)).cornerRadius(@50).backgroundLayer(gradientLayer)
+.entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
 //绘制View
 .drawView(^(UIView *drawView) {
 [self.view addSubview:drawView];
@@ -113,7 +113,7 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 ##### 通用属性
 
 * verticalOffset 垂直偏移
-* padding 与前一段之间的间距
+* horizontalOffset 水平方向偏移
 * onClicked 点击回调
 * onLayout 展示回调
 * cacheFrame 缓存该段文本绘制位置
@@ -146,6 +146,8 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 * maxSize 绘制的约束尺寸, 默认不限制
 * shadow 文字阴影, 对全文生效
 * preferHeight 期望绘制高度, 内容居中
+* verticalMargin 垂直方向间距, 若设置了 preferHeight 此属性不生效
+* horizontalMargin 水平方向间距
 * backgroundColor 背景颜色
 * backgroundLayer 背景视图, 常用图片背景/渐变色背景
 * cornerRadius 圆角
@@ -219,3 +221,4 @@ Jsoul1227@hotmail.com
 ## 许可证
 
 ZJAttributedText is available under the MIT license. See the LICENSE file for more info.
+
