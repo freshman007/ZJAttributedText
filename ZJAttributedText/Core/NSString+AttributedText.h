@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define TextBuild @""
+
 @class ZJTextElement;
 
 typedef void(^ZJTextReturnBlock)(ZJTextElement *element);

@@ -20,10 +20,10 @@
     [super viewDidLoad];
 
     //链式语法
-    [self dotFeature];
+//    [self dotFeature];
     
     //链式语法组合
-    //[self dotCombineFeature];
+    [self dotCombineFeature];
     
     //性能测试
     //[self performanceTest];
@@ -60,7 +60,7 @@
     
     //Layer
     CALayer *lineLayer = [CALayer layer];
-    lineLayer.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5].CGColor;
+    lineLayer.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.3].CGColor;
     lineLayer.frame = CGRectMake(0, 0, 15, 3);
     lineLayer.cornerRadius = 1.5;
     
@@ -93,22 +93,23 @@
     //阴影
     NSShadow *shadow = [NSShadow new];
     shadow.shadowBlurRadius = 4;
-    shadow.shadowColor = [UIColor redColor];
+    shadow.shadowColor = [[UIColor blueColor] colorWithAlphaComponent:0.6];
     
     //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
     CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
-    UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    UIColor *backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.1];
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[UIColor clearColor].CGColor];
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(0, 1);
+    
     /************核心使用************/
     
     //一次性生成文章
     
-    @""
+    TextBuild
     .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
     .append(firstPara).color(firstParaColor).align(@0)
     .append(webImage).font(separateLineFont).minLineHeight(@100)
@@ -190,50 +191,63 @@
     NSString *bookName = @"《云边有个小卖部》\n\n";
     NSString *quote = @" 他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。\n";
     
+    //阴影
+    NSShadow *shadow = [NSShadow new];
+    shadow.shadowBlurRadius = 4;
+    shadow.shadowColor = [UIColor redColor];
+    
+    //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
+    CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
+    
+    //背景
+    UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[UIColor clearColor].CGColor];
+    gradientLayer.startPoint = CGPointMake(0, 0);
+    gradientLayer.endPoint = CGPointMake(0, 1);
     
     //拼接文章
     //标题
-    title.font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
+    NSString *titleString = TextBuild.append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
     //首段
-    firstPara.color(firstParaColor).align(@0);
+    NSString *firstParaString = TextBuild.append(firstPara).color(firstParaColor).align(@0);
     //图片需要用一个空字符串起头
-    NSString *webImageString = @"".append(webImage).font(separateLineFont).minLineHeight(@100);
+    NSString *webImageString = TextBuild.append(webImage).font(separateLineFont).minLineHeight(@100);
     //分割线
-    separateLine.font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
+    NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
     //本地图片
-    NSString *locolImageString = @"".append(locolImage);
+    NSString *locolImageString = TextBuild.append(locolImage);
     //最后一段
-    lastPara.font(lastParaFont).align(@1).maxLineHeight(@20);
+    NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20);
     //书名
-    bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
+    NSString *bookNameString = TextBuild.append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
     //引用线Layer
-    NSString *lineLayerString = @"".append(lineLayer).attachSize(lineLayerSize);
+    NSString *lineLayerString = TextBuild.append(lineLayer).attachSize(lineLayerSize);
     //引用
-    quote.color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
+    NSString *quoteString = TextBuild.append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
     //按钮
-    NSString *buttonString = @"".append(buyButton).attachSize(buyButtonSize).attachAlign(@0);
+    NSString *buttonString = TextBuild.append(buyButton).attachSize(buyButtonSize).attachAlign(@0);
     
     //设置全局默认属性, 优先级低于指定属性
-    NSString *defaultAttributes = @"".entire()
-    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
+    NSString *defaultAttributes = TextBuild.entire()
+    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).preferHeight(@(preferHeigt));
     
     //拼接
-    title
-    .append(firstPara)
+    titleString
+    .append(firstParaString)
     .append(webImageString)
-    .append(separateLine)
+    .append(separateLineString)
     .append(locolImageString)
-    .append(lastPara)
-    .append(bookName)
+    .append(lastParaString)
+    .append(bookNameString)
     .append(lineLayerString)
-    .append(quote)
+    .append(quoteString)
     .append(buttonString)
     //设置默认属性
     .append(defaultAttributes)
     //绘制Layer
     .drawLayer(^(CALayer *drawLayer) {
-        drawLayer.frame = CGRectMake(27.5, 50, drawLayer.frame.size.width, drawLayer.frame.size.height);
-        drawLayer.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1].CGColor;
+        drawLayer.frame = CGRectMake(27.5, 47.5, drawLayer.frame.size.width, drawLayer.frame.size.height);
         [self.view.layer addSublayer:drawLayer];
     });
 }
