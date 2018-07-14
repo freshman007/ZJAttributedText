@@ -96,7 +96,7 @@
     shadow.shadowColor = [[UIColor blueColor] colorWithAlphaComponent:0.6];
     
     //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
-    CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
+    CGFloat preferHeight = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
     UIColor *backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.3];
@@ -121,10 +121,10 @@
     .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
     .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).verticalMargin(@8).horizontalMargin(@8)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
     //绘制View
     .drawView(^(UIView *drawView) {
-        drawView.frame = CGRectMake(19.5, 47.5, drawView.frame.size.width, drawView.frame.size.height);
+        drawView.frame = CGRectMake(27.5, 47.5, drawView.frame.size.width, drawView.frame.size.height);
         [self.view addSubview:drawView];
     });
 }
@@ -197,7 +197,7 @@
     shadow.shadowColor = [UIColor redColor];
     
     //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
-    CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
+    CGFloat preferHeight = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
     UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
@@ -230,7 +230,7 @@
     
     //设置全局默认属性, 优先级低于指定属性
     NSString *defaultAttributes = TextBuild.entire()
-    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).preferHeight(@(preferHeigt));
+    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight));
     
     //拼接
     titleString

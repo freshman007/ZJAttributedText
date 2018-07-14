@@ -152,28 +152,31 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
             }
         }
         
-        //创建CoreText相关抽象
-        CTFramesetterRef frameSetter = CTFramesetterCreateWithAttributedString(entireAttributedString);
+        //约束尺寸计算
         CGSize defaultParagraphSize = [tempDefaultAttributes.maxSize CGSizeValue];
         CGSize paragraphSize = CGSizeEqualToSize(defaultParagraphSize, CGSizeZero) ? CGSizeMake(MAXFLOAT, MAXFLOAT) : defaultParagraphSize;
+        CGFloat verticalMargin = tempDefaultAttributes.verticalMargin.floatValue;
+        CGFloat horizontalMargin = tempDefaultAttributes.horizontalMargin.floatValue;
+        CGSize fixParagraphSize = CGSizeMake(paragraphSize.width - 2 * horizontalMargin, paragraphSize.height - 2 * verticalMargin);
         
         //试算文本尺寸
-        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, CFRangeMake(0, CFAttributedStringGetLength(entireAttributedString)), nil, paragraphSize, nil);
+        CTFramesetterRef frameSetter = CTFramesetterCreateWithAttributedString(entireAttributedString);
+        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, CFRangeMake(0, CFAttributedStringGetLength(entireAttributedString)), nil, fixParagraphSize, nil);
         
         //输出尺寸
-        CGFloat outputWidth = textSize.width + tempDefaultAttributes.horizontalMargin.floatValue * 2;
+        CGFloat outputWidth = textSize.width + horizontalMargin * 2;
         CGFloat outputHeight = 0;
         if (tempDefaultAttributes.preferHeight) {
             outputHeight = tempDefaultAttributes.preferHeight.floatValue;
         } else {
-            outputHeight = textSize.height + tempDefaultAttributes.verticalMargin.floatValue * 2;
+            outputHeight = textSize.height + verticalMargin * 2;
         }
         CGSize outputSize = CGSizeMake(outputWidth, outputHeight);
         CGFloat textOffsetY = (outputSize.height - textSize.height) / 2;
         
         //生成相关路径->CTFrame
         CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, CGRectMake(tempDefaultAttributes.horizontalMargin.floatValue, textOffsetY, textSize.width, textSize.height));
+        CGPathAddRect(path, NULL, CGRectMake(horizontalMargin, textOffsetY, textSize.width, textSize.height));
         CFIndex length = CFAttributedStringGetLength(entireAttributedString);
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, length), path, NULL);
         
