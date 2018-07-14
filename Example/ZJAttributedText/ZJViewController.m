@@ -104,13 +104,13 @@
     .append(webImage).font(separateLineFont).minLineHeight(@100)
     .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
     .append(locolImage)
-    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
-    .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
-    .append(lineLayer).attachSize(lineLayerSize)
-    .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
-    .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
+//    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
+//    .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
+//    .append(lineLayer).attachSize(lineLayerSize)
+//    .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
+//    .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).preferHeight(@500)
     //绘制View
     .drawView(^(UIView *drawView) {
         drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
