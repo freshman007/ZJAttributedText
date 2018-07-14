@@ -21,14 +21,14 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 #pragma mark - common attributes
 
 /**
- 竖直方向偏移
+ 垂直方向偏移
  */
 @property (nonatomic, strong) NSNumber *verticalOffset;
 
 /**
- 距离前一段的距离
+ 水平方向偏移
  */
-@property (nonatomic, strong) NSNumber *padding;
+@property (nonatomic, strong) NSNumber *horizontalOffset;
 
 /**
  点击Block
@@ -110,6 +110,16 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
  * 整段文本属性 *: 期望高度, 设置本属性后绘制结果会以此高度居中
  */
 @property (nonatomic, strong) NSNumber *preferHeight;
+
+/**
+ * 整段文本属性 *: 垂直方向间距, 若设置了 preferHeight 此属性不生效
+ */
+@property (nonatomic, strong) NSNumber *verticalMargin;
+
+/**
+ * 整段文本属性 *: 水平方向间距
+ */
+@property (nonatomic, strong) NSNumber *horizontalMargin;
 
 /**
  * 整段文本属性 *: 背景颜色

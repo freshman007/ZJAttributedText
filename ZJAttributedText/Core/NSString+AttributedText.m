@@ -34,12 +34,15 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 @dynamic strokeWidth;
 @dynamic strokeColor;
 @dynamic verticalForm;
+@dynamic horizontalOffset;
 @dynamic underline;
 @dynamic attachSize;
 @dynamic attachAlign;
 @dynamic maxSize;
 @dynamic shadow;
 @dynamic preferHeight;
+@dynamic verticalMargin;
+@dynamic horizontalMargin;
 @dynamic backgroundColor;
 @dynamic backgroundLayer;
 @dynamic cornerRadius;
@@ -180,9 +183,9 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
     };
 }
 
-- (ZJTextDotNumberBlock)padding {
+- (ZJTextDotNumberBlock)horizontalOffset {
     return ^(NSNumber *number) {
-        [self setAssociate:self attribute:number forKey:@"padding"];
+        [self setAssociate:self attribute:number forKey:@"horizontalOffset"];
         return self;
     };
 }
@@ -281,6 +284,20 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 - (ZJTextDotNumberBlock)preferHeight {
     return ^(NSNumber *number) {
         [self setAssociate:self attribute:number forKey:@"preferHeight"];
+        return self;
+    };
+}
+
+- (ZJTextDotNumberBlock)verticalMargin {
+    return ^(NSNumber *number) {
+        [self setAssociate:self attribute:number forKey:@"verticalMargin"];
+        return self;
+    };
+}
+
+- (ZJTextDotNumberBlock)horizontalMargin {
+    return ^(NSNumber *number) {
+        [self setAssociate:self attribute:number forKey:@"horizontalMargin"];
         return self;
     };
 }

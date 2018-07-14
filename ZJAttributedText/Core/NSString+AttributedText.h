@@ -53,14 +53,14 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
 #pragma mark - common attributes
 
 /**
- 竖直方向偏移
+ 垂直方向偏移
  */
 @property (nonatomic, copy) ZJTextDotNumberBlock verticalOffset;
 
 /**
- 与前一段文本的间距
+ 水平方向偏移
  */
-@property (nonatomic, copy) ZJTextDotNumberBlock padding;
+@property (nonatomic, copy) ZJTextDotNumberBlock horizontalOffset;
 
 /**
  点击Block
@@ -142,6 +142,16 @@ typedef NSString *(^ZJTextDotViewDrawBlock)(ZJTextViewDrawCompletionBlock comple
  * 整段文本属性 *: 期望高度, 设置本属性后绘制结果会以此高度居中, 在 entire() 后生效, 或仅有一段文字生效!
  */
 @property (nonatomic, copy) ZJTextDotNumberBlock preferHeight;
+
+/**
+ * 整段文本属性 *: 垂直方向间距, 若设置了 preferHeight 此属性不生效, 在 entire() 后生效, 或仅有一段文字生效!
+ */
+@property (nonatomic, copy) ZJTextDotNumberBlock verticalMargin;
+
+/**
+ * 整段文本属性 *: 水平方向间距, 在 entire() 后生效, 或仅有一段文字生效!
+ */
+@property (nonatomic, copy) ZJTextDotNumberBlock horizontalMargin;
 
 /**
  * 整段文本属性 *: 背景颜色, 在 entire() 后生效, 或仅有一段文字生效!

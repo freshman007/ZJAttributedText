@@ -99,9 +99,9 @@
     CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
-    UIColor *backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.1];
+    UIColor *backgroundColor = [[UIColor orangeColor] colorWithAlphaComponent:0.3];
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[UIColor clearColor].CGColor];
+    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[[UIColor orangeColor] colorWithAlphaComponent:0.05].CGColor];
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(0, 1);
     
@@ -113,18 +113,18 @@
     .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
     .append(firstPara).color(firstParaColor).align(@0)
     .append(webImage).font(separateLineFont).minLineHeight(@100)
-    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30)
-    .append(locolImage).padding(@30)
+    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30)
+    .append(locolImage).horizontalOffset(@30)
     .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
     .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
     .append(lineLayer).attachSize(lineLayerSize)
     .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
     .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).preferHeight(@(preferHeigt)).cornerRadius(@50).backgroundLayer(gradientLayer)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).verticalMargin(@8).horizontalMargin(@8)
     //绘制View
     .drawView(^(UIView *drawView) {
-        drawView.frame = CGRectMake(27.5, 47.5, drawView.frame.size.width, drawView.frame.size.height);
+        drawView.frame = CGRectMake(19.5, 47.5, drawView.frame.size.width, drawView.frame.size.height);
         [self.view addSubview:drawView];
     });
 }
@@ -200,9 +200,9 @@
     CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
     //背景
-    UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
+    UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[UIColor clearColor].CGColor];
+    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[[UIColor orangeColor] colorWithAlphaComponent:0.05].CGColor];
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(0, 1);
     
@@ -214,9 +214,9 @@
     //图片需要用一个空字符串起头
     NSString *webImageString = TextBuild.append(webImage).font(separateLineFont).minLineHeight(@100);
     //分割线
-    NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).padding(@30);
+    NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30);
     //本地图片
-    NSString *locolImageString = TextBuild.append(locolImage).padding(@30);
+    NSString *locolImageString = TextBuild.append(locolImage).horizontalOffset(@30);
     //最后一段
     NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20);
     //书名
