@@ -140,17 +140,38 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CGSize defaultParagraphSize = [tempDefaultAttributes.maxSize CGSizeValue];
         CGSize paragraphSize = CGSizeEqualToSize(defaultParagraphSize, CGSizeZero) ? CGSizeMake(MAXFLOAT, MAXFLOAT) : defaultParagraphSize;
         
-        //试算
-        CGSize size = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, CFRangeMake(0, CFAttributedStringGetLength(entireAttributedString)), nil, paragraphSize, nil);
+        //试算文本尺寸
+        CGSize textSize = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, CFRangeMake(0, CFAttributedStringGetLength(entireAttributedString)), nil, paragraphSize, nil);
+        
+        //输出尺寸
+        CGFloat outputHeight = tempDefaultAttributes.preferHeight ? tempDefaultAttributes.preferHeight.floatValue : textSize.height;
+        CGSize outputSize = CGSizeMake(textSize.width, outputHeight);
+        CGFloat textOffsetY = (outputSize.height - textSize.height) / 2;
         
         //生成相关路径->CTFrame
         CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
+        CGPathAddRect(path, NULL, CGRectMake(0, textOffsetY, textSize.width, textSize.height));
         CFIndex length = CFAttributedStringGetLength(entireAttributedString);
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, length), path, NULL);
         
+        //处理背景
+        CALayer *backgroundLayer = nil;
+        if (tempDefaultAttributes.backgroundLayer || tempDefaultAttributes.backgroundColor || tempDefaultAttributes.cornerRadius) {
+            backgroundLayer = tempDefaultAttributes.backgroundLayer;
+            if (!backgroundLayer) {
+                backgroundLayer = [CALayer layer];
+            }
+            backgroundLayer.frame = CGRectMake(backgroundLayer.frame.origin.x, backgroundLayer.frame.origin.y, outputSize.width, outputSize.height);
+            if (tempDefaultAttributes.cornerRadius) {
+                backgroundLayer.cornerRadius = tempDefaultAttributes.cornerRadius.floatValue;
+            }
+            if (tempDefaultAttributes.backgroundColor) {
+                backgroundLayer.backgroundColor = tempDefaultAttributes.backgroundColor.CGColor;
+            }
+        }
+        
         //绘制图片
-        UIImage *drawImage = [self drawBitmapWithTextFrame:frame imageElements:imageElements inSize:size shadow:tempDefaultAttributes.shadow];
+        UIImage *drawImage = [self drawBitmapWithTextFrame:frame textShadow:tempDefaultAttributes.shadow imageElements:imageElements outputSize:outputSize background:backgroundLayer];
         
         //主线程生成Layer
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -158,8 +179,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
             ZJTextLayer *layer = [ZJTextLayer layer];
             [self drawURLImageOnLayer:layer imageURLElements:imageURLElements];
             layer.elements = elements;
-            CGFloat height = tempDefaultAttributes.preferHeight ? tempDefaultAttributes.preferHeight.floatValue : size.height;
-            layer.frame = CGRectMake(0, 0, size.width, height);
+            layer.frame = CGRectMake(0, 0, outputSize.width, outputSize.height);
             layer.contents = (__bridge id)drawImage.CGImage;
             layer.contentsGravity = kCAGravityResizeAspect;
 
@@ -570,19 +590,22 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     }
 }
 
-+ (UIImage *)drawBitmapWithTextFrame:(CTFrameRef)frame imageElements:(NSArray<ZJTextElement *> *)imageElements inSize:(CGSize)size shadow:(NSShadow *)shadow {
++ (UIImage *)drawBitmapWithTextFrame:(CTFrameRef)frame textShadow:(NSShadow *)shadow imageElements:(NSArray<ZJTextElement *> *)imageElements outputSize:(CGSize)outputSize background:(CALayer *)background {
     
     //开启图片上下文
-    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(outputSize, NO, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
-    
+
+    //渲染背景
+    [background renderInContext:context];
+
     //翻转上下文
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-    CGContextTranslateCTM(context, 0, size.height);
+    CGContextTranslateCTM(context, 0, outputSize.height);
     CGContextScaleCTM(context, 1.0, -1.0);
     
     //缓存位置
-    [self cacheFrameToElementIfNeeded:frame size:size];
+    [self cacheFrameToElementIfNeeded:frame size:outputSize];
     
     //绘制图片
     for (ZJTextElement *imageElement in imageElements) {

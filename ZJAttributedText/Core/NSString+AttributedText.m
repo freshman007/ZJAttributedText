@@ -40,6 +40,9 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 @dynamic maxSize;
 @dynamic shadow;
 @dynamic preferHeight;
+@dynamic backgroundColor;
+@dynamic backgroundLayer;
+@dynamic cornerRadius;
 @dynamic minLineSpace;
 @dynamic maxLineSpace;
 @dynamic minLineHeight;
@@ -271,6 +274,27 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
 - (ZJTextDotNumberBlock)preferHeight {
     return ^(NSNumber *number) {
         [self setAssociate:self attribute:number forKey:@"preferHeight"];
+        return self;
+    };
+}
+
+- (ZJTextDotColorBlock)backgroundColor {
+    return ^(UIColor *color) {
+        [self setAssociate:self attribute:color forKey:@"backgroundColor"];
+        return self;
+    };
+}
+
+- (ZJTextDotLayerBlock)backgroundLayer {
+    return ^(CALayer *layer) {
+        [self setAssociate:self attribute:layer forKey:@"backgroundLayer"];
+        return self;
+    };
+}
+
+- (ZJTextDotNumberBlock)cornerRadius {
+    return ^(NSNumber *number) {
+        [self setAssociate:self attribute:number forKey:@"cornerRadius"];
         return self;
     };
 }

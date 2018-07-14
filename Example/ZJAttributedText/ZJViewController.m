@@ -94,6 +94,16 @@
     NSShadow *shadow = [NSShadow new];
     shadow.shadowBlurRadius = 4;
     shadow.shadowColor = [UIColor redColor];
+    
+    //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
+    CGFloat preferHeigt = [UIScreen mainScreen].bounds.size.height - 20 - 55;
+    
+    //背景
+    UIColor *backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = @[(__bridge id)backgroundColor.CGColor, (__bridge id)[UIColor clearColor].CGColor];
+    gradientLayer.startPoint = CGPointMake(0, 0);
+    gradientLayer.endPoint = CGPointMake(0, 1);
     /************核心使用************/
     
     //一次性生成文章
@@ -104,17 +114,16 @@
     .append(webImage).font(separateLineFont).minLineHeight(@100)
     .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
     .append(locolImage)
-//    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
-//    .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
-//    .append(lineLayer).attachSize(lineLayerSize)
-//    .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
-//    .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
+    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
+    .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
+    .append(lineLayer).attachSize(lineLayerSize)
+    .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
+    .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).preferHeight(@500)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).preferHeight(@(preferHeigt)).cornerRadius(@50).backgroundLayer(gradientLayer)
     //绘制View
     .drawView(^(UIView *drawView) {
-        drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
-        drawView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
+        drawView.frame = CGRectMake(27.5, 47.5, drawView.frame.size.width, drawView.frame.size.height);
         [self.view addSubview:drawView];
     });
 }

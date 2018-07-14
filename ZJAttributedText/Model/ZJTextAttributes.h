@@ -107,6 +107,21 @@ typedef void(^ZJTextReturnBlock)(ZJTextElement *element);
 @property (nonatomic, strong) NSNumber *preferHeight;
 
 /**
+ * 整段文本属性 *: 背景颜色
+ */
+@property (nonatomic, strong) UIColor *backgroundColor;
+
+/**
+ * 整段文本属性 *: 背景图层, 主要用作渐变色/图片背景
+ */
+@property (nonatomic, strong) CALayer *backgroundLayer;
+
+/**
+ * 整段文本属性 *: 设置圆角
+ */
+@property (nonatomic, strong) NSNumber *cornerRadius;
+
+/**
  最小行间距
  */
 @property (nonatomic, strong) NSNumber *minLineSpace;
