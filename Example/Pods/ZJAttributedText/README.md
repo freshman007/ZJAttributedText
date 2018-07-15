@@ -32,7 +32,7 @@ TextBuild
 .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
 //绘制View
 .drawView(^(UIView *drawView) {
-	[self.view addSubview:drawView];
+[self.view addSubview:drawView];
 });
 ```
 
@@ -83,7 +83,7 @@ TextBuild
 .append(defaultAttributes)
 //绘制Layer
 .drawLayer(^(CALayer *drawLayer) {
-	[self.view.layer addSublayer:drawLayer];
+[self.view.layer addSublayer:drawLayer];
 });
 ```
 
@@ -214,7 +214,7 @@ TextBuild.append(string).color([UIColor whiteColor]).append(@"test").....
 [CocoaPods](https://cocoapods.org):
 
 ```ruby
-pod 'ZJAttributedText', '0.1.4'
+pod 'ZJAttributedText'
 ```
 
 ## 作者
