@@ -125,7 +125,7 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 * minLineHeight 最小行高
 * maxLineHeight 最小行高
 * align 对齐, 整形, 0为默认靠左 1为靠右 2为居中, 参考 CTTextAlignment
-* lineBreakMode 对齐, 整形, 参考 NSLineBreakMode
+* lineBreakMode 对齐, 整形, 参考 CTLineBreakMode
 
 ##### 字符串属性
 
