@@ -545,6 +545,8 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     CFIndex linesCount = CFArrayGetCount(linesArray);
     CGPoint points[linesCount];
     CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), points);
+    CGPathRef path = CTFrameGetPath(frame);
+    CGRect boxRect = CGPathGetBoundingBox(path);
     
     //遍历CTLine
     for (CFIndex i = 0; i < linesCount; i++) {
@@ -552,7 +554,6 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CTLineRef line = CFArrayGetValueAtIndex(linesArray, i);
         CFArrayRef runsArray = CTLineGetGlyphRuns(line);
         CFIndex runsCount = CFArrayGetCount(runsArray);
-        
         //遍历CTRun
         for (CFIndex j = 0; j < runsCount; j++) {
             
@@ -580,8 +581,6 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 CGFloat offsetX = CTLineGetOffsetForStringIndex(line, CTRunGetStringRange(run).location, NULL);
                 runBounds.origin.x = point.x + offsetX;
                 runBounds.origin.y = point.y - descent;
-                CGPathRef path = CTFrameGetPath(frame);
-                CGRect boxRect = CGPathGetBoundingBox(path);
                 
                 //绘制的基础frame
                 CGRect bounds = CGRectOffset(runBounds, boxRect.origin.x, boxRect.origin.y);
