@@ -481,11 +481,11 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         case ZJTextAttachAlignCenterToFont: {
             UIFont *font = element.attributes.font ? : [UIFont systemFontOfSize:12];
             CGFloat fontAscent = fabs(font.ascender);
-            CGFloat fontDescent = fabs(font.descender);
-            CGFloat fontHeight = (fontDescent + fontAscent);
-            CGFloat deltaHeght = (height - fontHeight) / 2;
-            ascent = deltaHeght + fontAscent;
-            descent = deltaHeght+ fontDescent;
+            CGFloat deltaHeght = (height - font.lineHeight) / 2;
+            CGFloat preAscent = deltaHeght + fontAscent;
+            CGFloat fix = preAscent / 0.5;
+            ascent = fix * 0.5;
+            descent = height - ascent;  
             break;
         }
     }

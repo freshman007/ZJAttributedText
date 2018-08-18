@@ -59,9 +59,13 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
     return ^(id content) {
         if (!content) return self;
         if ([content isKindOfClass:[NSString class]]) {
-            //将前文字符串关联起来
-            objc_setAssociatedObject(content, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            return (NSString *)content;
+            if ([content length]) {
+                //将前文字符串关联起来
+                objc_setAssociatedObject(content, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                return (NSString *)content;
+            } else {
+                return self;
+            }
         } else if ([content isKindOfClass:[UIImage class]] || [content isKindOfClass:[NSURL class]] || [content isKindOfClass:[CALayer class]] || [content isKindOfClass:[UIView class]]) {
             //若是其他
             NSString *placeHolder = [NSString stringWithFormat:@"%@%.0f$", kZJTextStringAttachPlaceHolderPrefix, [[NSDate date] timeIntervalSince1970]];
