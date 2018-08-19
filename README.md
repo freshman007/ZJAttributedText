@@ -120,7 +120,7 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 * onClicked 点击回调
 * onLayout 展示回调
 * cacheFrame 缓存该段文本绘制位置
-* minLineSpace 最小行间距
+* minLineSpace 最小行间距, 在iOS10以前, 设置行高后内容会局底部对齐, iOS10以后会居中对齐
 * maxLineSpace 最大行间距
 * minLineHeight 最小行高
 * maxLineHeight 最小行高

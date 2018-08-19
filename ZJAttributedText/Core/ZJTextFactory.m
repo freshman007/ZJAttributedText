@@ -485,7 +485,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
             CGFloat preAscent = deltaHeght + fontAscent;
             CGFloat fix = preAscent / 0.5;
             ascent = fix * 0.5;
-            descent = height - ascent;  
+            descent = height - ascent;
             break;
         }
     }
