@@ -52,8 +52,13 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
         if (!content) return self;
         if ([content isKindOfClass:[NSString class]]) {
             //将前文字符串关联起来
-            objc_setAssociatedObject(content, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            return (NSString *)content;
+            if ([content length]) {
+                NSString *newContent = [content mutableCopy];
+                objc_setAssociatedObject(newContent, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                return (NSString *)newContent;
+            } else {
+                return self;
+            }
         } else if ([content isKindOfClass:[UIImage class]] || [content isKindOfClass:[NSURL class]] || [content isKindOfClass:[CALayer class]] || [content isKindOfClass:[UIView class]]) {
             //若是其他
             NSString *placeHolder = [NSString stringWithFormat:@"%@%.0f$", kZJTextStringAttachPlaceHolderPrefix, [[NSDate date] timeIntervalSince1970]];
@@ -61,7 +66,7 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
             objc_setAssociatedObject(placeHolder, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             return placeHolder;
         }
-        return @"";
+        return self;
     };
 }
 
@@ -159,6 +164,23 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
     }
     if (comletion) {
         comletion(elements, defaultAttributes);
+    }
+}
+
+- (BOOL)checkLoopWithContent:(id)content {
+    
+    NSString *slowContent = content;
+    NSString *fastContent = content;
+    while (slowContent) {
+        slowContent = objc_getAssociatedObject(slowContent, kZJTextStringContextAssociateKey.UTF8String);
+        if (slowContent) {
+            fastContent = objc_getAssociatedObject(fastContent, kZJTextStringContextAssociateKey.UTF8String);
+            if (fastContent) {
+                fastContent = objc_getAssociatedObject(fastContent, kZJTextStringContextAssociateKey.UTF8String);
+            } else {
+                return NO;
+            }
+        } else 
     }
 }
 
