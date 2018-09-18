@@ -73,7 +73,7 @@
 		8874F79C66603603E5341137 /* Pods-ZJAttributedText_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZJAttributedText_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZJAttributedText_Example/Pods-ZJAttributedText_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		D228E2875FB88EFCFDD7D64F /* Pods-ZJAttributedText_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZJAttributedText_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZJAttributedText_Tests/Pods-ZJAttributedText_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		D73857EE5FA2A9AC5E661E23 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		E8A834FAFA07C299E580B12B /* ZJAttributedText.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ZJAttributedText.podspec; path = ../ZJAttributedText.podspec; sourceTree = "<group>"; };
+		E8A834FAFA07C299E580B12B /* ZJAttributedText.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ZJAttributedText.podspec; path = ../ZJAttributedText.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

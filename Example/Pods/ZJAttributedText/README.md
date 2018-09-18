@@ -32,7 +32,7 @@ TextBuild
 .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
 //绘制View
 .drawView(^(UIView *drawView) {
-	[self.view addSubview:drawView];
+[self.view addSubview:drawView];
 });
 ```
 
@@ -83,7 +83,7 @@ TextBuild
 .append(defaultAttributes)
 //绘制Layer
 .drawLayer(^(CALayer *drawLayer) {
-	[self.view.layer addSublayer:drawLayer];
+[self.view.layer addSublayer:drawLayer];
 });
 ```
 
@@ -120,12 +120,12 @@ content 可以是文本(NSString)、图片(UIImage)、图片链接(NSURL)(必须
 * onClicked 点击回调
 * onLayout 展示回调
 * cacheFrame 缓存该段文本绘制位置
-* minLineSpace 最小行间距, 在iOS10以前, 设置行高后内容会局底部对齐, iOS10以后会居中对齐
+* minLineSpace 最小行间距
 * maxLineSpace 最大行间距
 * minLineHeight 最小行高
 * maxLineHeight 最小行高
 * align 对齐, 整形, 0为默认靠左 1为靠右 2为居中, 参考 CTTextAlignment
-* lineBreakMode 对齐, 整形, 参考 CTLineBreakMode
+* lineBreakMode 对齐, 整形, 参考 NSLineBreakMode
 
 ##### 字符串属性
 
@@ -214,7 +214,7 @@ TextBuild.append(string).color([UIColor whiteColor]).append(@"test").....
 [CocoaPods](https://cocoapods.org):
 
 ```ruby
-pod 'ZJAttributedText', '0.1.4'
+pod 'ZJAttributedText'
 ```
 
 ## 作者

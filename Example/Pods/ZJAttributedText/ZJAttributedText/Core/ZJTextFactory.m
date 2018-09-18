@@ -180,8 +180,24 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CFIndex length = CFAttributedStringGetLength(entireAttributedString);
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, length), path, NULL);
         
+        //处理背景
+        CALayer *backgroundLayer = nil;
+        if (tempDefaultAttributes.backgroundLayer || tempDefaultAttributes.backgroundColor || tempDefaultAttributes.cornerRadius) {
+            backgroundLayer = tempDefaultAttributes.backgroundLayer;
+            if (!backgroundLayer) {
+                backgroundLayer = [CALayer layer];
+            }
+            backgroundLayer.frame = CGRectMake(backgroundLayer.frame.origin.x, backgroundLayer.frame.origin.y, outputSize.width, outputSize.height);
+            if (tempDefaultAttributes.cornerRadius) {
+                backgroundLayer.cornerRadius = tempDefaultAttributes.cornerRadius.floatValue;
+            }
+            if (tempDefaultAttributes.backgroundColor) {
+                backgroundLayer.backgroundColor = tempDefaultAttributes.backgroundColor.CGColor;
+            }
+        }
+        
         //绘制图片
-        UIImage *drawImage = [self drawBitmapWithTextFrame:frame defaultAttributes:tempDefaultAttributes imageElements:imageElements outputSize:outputSize];
+        UIImage *drawImage = [self drawBitmapWithTextFrame:frame textShadow:tempDefaultAttributes.shadow imageElements:imageElements outputSize:outputSize background:backgroundLayer];
         
         //主线程生成Layer
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -465,11 +481,11 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         case ZJTextAttachAlignCenterToFont: {
             UIFont *font = element.attributes.font ? : [UIFont systemFontOfSize:12];
             CGFloat fontAscent = fabs(font.ascender);
-            CGFloat deltaHeght = (height - font.lineHeight) / 2;
-            CGFloat preAscent = deltaHeght + fontAscent;
-            CGFloat fix = preAscent / 0.5;
-            ascent = fix * 0.5;
-            descent = height - ascent;
+            CGFloat fontDescent = fabs(font.descender);
+            CGFloat fontHeight = (fontDescent + fontAscent);
+            CGFloat deltaHeght = (height - fontHeight) / 2;
+            ascent = deltaHeght + fontAscent;
+            descent = deltaHeght+ fontDescent;
             break;
         }
     }
@@ -529,8 +545,6 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     CFIndex linesCount = CFArrayGetCount(linesArray);
     CGPoint points[linesCount];
     CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), points);
-    CGPathRef path = CTFrameGetPath(frame);
-    CGRect boxRect = CGPathGetBoundingBox(path);
     
     //遍历CTLine
     for (CFIndex i = 0; i < linesCount; i++) {
@@ -538,6 +552,7 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
         CTLineRef line = CFArrayGetValueAtIndex(linesArray, i);
         CFArrayRef runsArray = CTLineGetGlyphRuns(line);
         CFIndex runsCount = CFArrayGetCount(runsArray);
+        
         //遍历CTRun
         for (CFIndex j = 0; j < runsCount; j++) {
             
@@ -565,6 +580,8 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
                 CGFloat offsetX = CTLineGetOffsetForStringIndex(line, CTRunGetStringRange(run).location, NULL);
                 runBounds.origin.x = point.x + offsetX;
                 runBounds.origin.y = point.y - descent;
+                CGPathRef path = CTFrameGetPath(frame);
+                CGRect boxRect = CGPathGetBoundingBox(path);
                 
                 //绘制的基础frame
                 CGRect bounds = CGRectOffset(runBounds, boxRect.origin.x, boxRect.origin.y);
@@ -599,48 +616,14 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     }
 }
 
-+ (UIImage *)drawBitmapWithTextFrame:(CTFrameRef)frame defaultAttributes:(ZJTextAttributes *)defaultAttributes imageElements:(NSArray<ZJTextElement *> *)imageElements outputSize:(CGSize)outputSize {
++ (UIImage *)drawBitmapWithTextFrame:(CTFrameRef)frame textShadow:(NSShadow *)shadow imageElements:(NSArray<ZJTextElement *> *)imageElements outputSize:(CGSize)outputSize background:(CALayer *)background {
     
     //开启图片上下文
     UIGraphicsBeginImageContextWithOptions(outputSize, NO, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
 
     //渲染背景
-    if (defaultAttributes.backgroundLayer) {
-        
-        defaultAttributes.backgroundLayer.frame = CGRectMake(defaultAttributes.backgroundLayer.frame.origin.x, defaultAttributes.backgroundLayer.frame.origin.y, outputSize.width, outputSize.height);
-        
-        if (defaultAttributes.backgroundColor) {
-            defaultAttributes.backgroundLayer.backgroundColor = defaultAttributes.backgroundColor.CGColor;
-        }
-        if (defaultAttributes.cornerRadius) {
-            defaultAttributes.backgroundLayer.cornerRadius = defaultAttributes.cornerRadius.floatValue;
-        }
-        
-        [defaultAttributes.backgroundLayer renderInContext:context];
-        
-    } else if (defaultAttributes.backgroundColor || defaultAttributes.cornerRadius) {
-        
-        UIGraphicsBeginImageContextWithOptions(outputSize, NO, [UIScreen mainScreen].scale);
-        CGContextRef backgroundContext = UIGraphicsGetCurrentContext();
-        CGRect rect = CGRectMake(0, 0, outputSize.width, outputSize.height);
-        
-        if (defaultAttributes.cornerRadius) {
-            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:defaultAttributes.cornerRadius.doubleValue * [UIScreen mainScreen].scale];
-            CGContextAddPath(backgroundContext, path.CGPath);
-            CGContextClip(backgroundContext);
-        }
-        
-        if (defaultAttributes.backgroundColor) {
-            CGContextSetFillColorWithColor(backgroundContext, defaultAttributes.backgroundColor.CGColor);
-            CGContextFillRect(backgroundContext, rect);
-        }
-        
-        UIImage *backgroundImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        
-        CGContextDrawImage(context, rect, backgroundImage.CGImage);
-    }
+    [background renderInContext:context];
 
     //翻转上下文
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
@@ -661,8 +644,8 @@ static NSString *const kZJTextImageWidthAssociateKey = @"kZJTextImageWidthAssoci
     }
     
     if (shadow) {
-        NSAssert([defaultAttributes.shadow.shadowColor isKindOfClass:[UIColor class]], @"shadow color is not UIColor class");
-        CGContextSetShadowWithColor(context, defaultAttributes.shadow.shadowOffset, defaultAttributes.shadow.shadowBlurRadius, [defaultAttributes.shadow.shadowColor CGColor]);
+        NSAssert([shadow.shadowColor isKindOfClass:[UIColor class]], @"shadow color is not UIColor class");
+        CGContextSetShadowWithColor(context, shadow.shadowOffset, shadow.shadowBlurRadius, [shadow.shadowColor CGColor]);
     }
     
     //绘制文本

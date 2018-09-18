@@ -7,12 +7,10 @@
 //
 
 #import "ZJViewController.h"
-#import "ZJTextFactory.h"
-#import "ZJTextElement.h"
-#import "ZJTextAttributes.h"
-#import "NSString+AttributedText.h"
+#import "ZJAttributedText.h"
 #import "ZJTestLabel.h"
-#import <objc/runtime.h>
+
+#define RGBHex(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @interface ZJViewController ()
 
@@ -26,8 +24,8 @@
     //链式语法
     [self dotFeature];
     
-    //最基础用法
-    //[self baseFeature];
+    //链式语法组合
+    //[self dotCombineFeature];
     
     //性能测试
     //[self performanceTest];
@@ -38,33 +36,51 @@
     /************常量生成************/
     
     //回调
-    ZJTextZJTextAttributeCommonBlock titleOnLayout = ^(ZJTextElement *element) {
+    ZJTextReturnBlock titleOnLayout = ^(ZJTextElement *element) {
         NSLog(@"已显示: %@", element.content);
     };
-    ZJTextZJTextAttributeCommonBlock titleOnClicked = ^(ZJTextElement *element) {
+    ZJTextReturnBlock titleOnClicked = ^(ZJTextElement *element) {
         NSLog(@"标题被点击: %@", element.content);
     };
-    ZJTextZJTextAttributeCommonBlock textOnClicked = ^(ZJTextElement *element) {
+    ZJTextReturnBlock textOnClicked = ^(ZJTextElement *element) {
         NSLog(@"其他被点击: %@", element.content);
     };
-    ZJTextZJTextAttributeCommonBlock bookOnClicked = ^(ZJTextElement *element) {
+    ZJTextReturnBlock bookOnClicked = ^(ZJTextElement *element) {
         NSLog(@"书被点击: %@", element.content);
     };
     
     //字体与颜色
     UIFont *titleFont = [UIFont boldSystemFontOfSize:20];
-    UIColor *titleColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
-    UIColor *firstParaColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    UIFont *separateLineFont =[UIFont systemFontOfSize:15];
-    UIColor *separateLineColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.7];
+    UIColor *titleColor = [UIColor whiteColor];
+    UIColor *firstParaColor = RGBHex(0xf5eee6);
+    UIFont *separateLineFont = [UIFont boldSystemFontOfSize:15];
+    UIColor *separateLineColor = RGBHex(0x216583);
     UIFont *lastParaFont = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+    UIColor *lastParaColor = RGBHex(0x0d7e83);
     UIFont *bookNameFont = [UIFont boldSystemFontOfSize:22];
-    UIColor *bookNameColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    UIColor *quoteColor = [[UIColor grayColor] colorWithAlphaComponent:0.3];
+    UIColor *bookNameColor = RGBHex(0xf76262);
+    UIColor *quoteColor = RGBHex(0xfab2ac);
+    
+    //Layer
+    CALayer *lineLayer = [CALayer layer];
+    lineLayer.backgroundColor = RGBHex(0xf6f6f6).CGColor;
+    lineLayer.frame = CGRectMake(0, 0, 15, 3);
+    lineLayer.cornerRadius = 1.5;
+    
+    //View
+    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [buyButton setTitle:@"购买本书" forState:UIControlStateNormal];
+    [buyButton setTitleColor:RGBHex(0xffe2e2) forState:UIControlStateNormal];
+    [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
+    [buyButton setBackgroundColor:RGBHex(0xbad7df)];
+    buyButton.layer.cornerRadius = 15;
+    [buyButton addTarget:self action:@selector(buyBook) forControlEvents:UIControlEventTouchUpInside];
     
     //绘制大小限制
     NSValue *maxSize = [NSValue valueWithCGSize:CGSizeMake(325, MAXFLOAT)];
     NSValue *attachSize = [NSValue valueWithCGSize:CGSizeMake(35, 35)];
+    NSValue *lineLayerSize = [NSValue valueWithCGSize:lineLayer.bounds.size];
+    NSValue *buyButtonSize = [NSValue valueWithCGSize:buyButton.bounds.size];
     
     //内容
     NSString *title = @"随笔\n\n";
@@ -77,185 +93,168 @@
     NSString *bookName = @"《云边有个小卖部》\n\n";
     NSString *quote = @" 他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。\n";
     
-    //视图
-    CALayer *lineLayer = [CALayer layer];
-    lineLayer.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5].CGColor;
-    lineLayer.frame = CGRectMake(0, 0, 15, 3);
-    lineLayer.cornerRadius = 1.5;
+    //阴影
+    NSShadow *shadow = [NSShadow new];
+    shadow.shadowBlurRadius = 4;
+    shadow.shadowColor = RGBHex(0x99ddcc);
     
-    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [buyButton setTitle:@"购买本书" forState:UIControlStateNormal];
-    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
-    [buyButton setBackgroundColor:[UIColor orangeColor]];
-    buyButton.layer.cornerRadius = 15;
-    [buyButton addTarget:self action:@selector(buyBook) forControlEvents:UIControlEventTouchUpInside];
+    //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
+    CGFloat preferHeight = [UIScreen mainScreen].bounds.size.height - 20 - 55;
+    
+    //背景
+    UIColor *backgroundColor1 = RGBHex(0Xbad7df);
+    UIColor *backgroundColor2 = RGBHex(0Xffe2e2);
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = @[(__bridge id)backgroundColor1.CGColor, (__bridge id)backgroundColor2.CGColor];
+    gradientLayer.startPoint = CGPointMake(0, 0);
+    gradientLayer.endPoint = CGPointMake(0, 1);
     
     /************核心使用************/
     
     //一次性生成文章
     
-    @""
+    TextBuild
     .append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout)
     .append(firstPara).color(firstParaColor).align(@0)
     .append(webImage).font(separateLineFont).minLineHeight(@100)
-    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1)
-    .append(locolImage)
-    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20)
+    .append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30)
+    .append(locolImage).horizontalOffset(@30)
+    .append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20).color(lastParaColor)
     .append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1)
-    .append(lineLayer).attachSize([NSValue valueWithCGSize:lineLayer.bounds.size])
+    .append(lineLayer).attachSize(lineLayerSize)
     .append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0)
-    .append(buyButton).attachSize([NSValue valueWithCGSize:buyButton.bounds.size]).attachAlign(@0)
+    .append(buyButton).attachSize(buyButtonSize).attachAlign(@0)
     //设置全局默认属性, 优先级低于指定属性
-    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize)
+    .entire().maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight))
     //绘制View
     .drawView(^(UIView *drawView) {
-        drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
-        drawView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
+        drawView.frame = CGRectMake(27.5, 47.5, drawView.frame.size.width, drawView.frame.size.height);
         [self.view addSubview:drawView];
     });
-    
-    //拼接文章
-    
-    //    //标题
-    //    title.font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
-    //    //首段
-    //    firstPara.color(firstParaColor).align(@0);
-    //    //图片需要用一个空字符串起头
-    //    NSString *webImageString = @"".append(webImage).font(separateLineFont).minLineHeight(@100);
-    //    //分割线
-    //    separateLine.font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1);
-    //    //本地图片
-    //    NSString *locolImageString = @"".append(locolImage);
-    //    //最后一段
-    //    lastPara.font(lastParaFont).align(@1).maxLineHeight(@20);
-    //    //书名
-    //    bookName.font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
-    //    //引用线Layer
-    //    NSString *lineLayerString = @"".append(lineLayer).attachSize([NSValue valueWithCGSize:lineLayer.bounds.size]);
-    //    //引用
-    //    quote.color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
-    //    //按钮
-    //    NSString *buttonString = @"".append(buyButton).attachSize([NSValue valueWithCGSize:buyButton.bounds.size]).attachAlign(@0);
-    //
-    //    //设置全局默认属性, 优先级低于指定属性
-    //    NSString *defaultAttributes = @"".entire()
-    //    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize);
-    //
-    //    //拼接
-    //    title
-    //    .append(firstPara)
-    //    .append(webImageString)
-    //    .append(separateLine)
-    //    .append(locolImageString)
-    //    .append(lastPara)
-    //    .append(bookName)
-    //    .append(lineLayerString)
-    //    .append(quote)
-    //    .append(buttonString)
-    //    //设置默认属性
-    //    .append(defaultAttributes)
-    //    //绘制Layer
-    //    .drawLayer(^(CALayer *drawLayer) {
-    //        drawLayer.frame = CGRectMake(27.5, 50, drawLayer.frame.size.width, drawLayer.frame.size.height);
-    //        drawLayer.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
-    //        [self.view.layer addSublayer:drawLayer];
-    //    });
 }
 
-- (void)baseFeature {
+- (void)dotCombineFeature {
     
-    //元素1
-    ZJTextElement *element1 = [ZJTextElement new];
-    element1.content = @"随笔\n\n";
-    element1.attributes.font = [UIFont boldSystemFontOfSize:20];
-    element1.attributes.color = [[UIColor blackColor] colorWithAlphaComponent:0.8];
-    element1.attributes.align = @2;
-    element1.attributes.onLayout = ^(ZJTextElement *element) {
+    /************常量生成************/
+    
+    //回调
+    ZJTextReturnBlock titleOnLayout = ^(ZJTextElement *element) {
         NSLog(@"已显示: %@", element.content);
     };
-    element1.attributes.onClicked = ^(ZJTextElement *element) {
+    ZJTextReturnBlock titleOnClicked = ^(ZJTextElement *element) {
         NSLog(@"标题被点击: %@", element.content);
     };
+    ZJTextReturnBlock textOnClicked = ^(ZJTextElement *element) {
+        NSLog(@"其他被点击: %@", element.content);
+    };
+    ZJTextReturnBlock bookOnClicked = ^(ZJTextElement *element) {
+        NSLog(@"书被点击: %@", element.content);
+    };
     
-    //元素2
-    ZJTextElement *element2 = [ZJTextElement new];
-    element2.content = @"       张嘉佳又出了新书，把书名取成《云边有个小卖部》。他说“时隔五年了，写给离开我们的人，写给陪伴我们的人，写给每个人心中的山和海。\n       《云边有个小卖部》离他上次的一本书，已经过去五年了。\n";
-    element2.attributes.color = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    element2.attributes.align = @0;
+    //字体与颜色
+    UIFont *titleFont = [UIFont boldSystemFontOfSize:20];
+    UIColor *titleColor = [UIColor whiteColor];
+    UIColor *firstParaColor = RGBHex(0xf5eee6);
+    UIFont *separateLineFont = [UIFont boldSystemFontOfSize:15];
+    UIColor *separateLineColor = RGBHex(0x216583);
+    UIFont *lastParaFont = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+    UIColor *lastParaColor = RGBHex(0x0d7e83);
+    UIFont *bookNameFont = [UIFont boldSystemFontOfSize:22];
+    UIColor *bookNameColor = RGBHex(0xf76262);
+    UIColor *quoteColor = RGBHex(0xfab2ac);
     
-    //元素3
-    ZJTextElement *element3 = [ZJTextElement new];
-    NSString *image3Path = [[NSBundle mainBundle] pathForResource:@"dy008" ofType:@"png"];
-    element3.content = [UIImage imageWithContentsOfFile:image3Path];
-//    element3.attributes.attachSize =  [NSValue valueWithCGSize:CGSizeMake(30, 30)];
-    element3.attributes.attachAlign = @(ZJTextAttachAlignCenterToFont);
-    element3.attributes.align = @2;
-    element3.attributes.font = [UIFont systemFontOfSize:10];
-    element3.attributes.minLineHeight = @100;
+    //Layer
+    CALayer *lineLayer = [CALayer layer];
+    lineLayer.backgroundColor = RGBHex(0xf6f6f6).CGColor;
+    lineLayer.frame = CGRectMake(0, 0, 15, 3);
+    lineLayer.cornerRadius = 1.5;
     
-    //元素4
-    ZJTextElement *element4 = [ZJTextElement new];
-    element4.content = @"-----分界-----";
-    element4.attributes.font = [UIFont systemFontOfSize:10];
-    element4.attributes.color = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-    element4.attributes.strokeColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.7];
-    element4.attributes.strokeWidth = @-2;
-    element4.attributes.align = @2;
-    element4.attributes.minLineHeight = @100;
+    //View
+    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [buyButton setTitle:@"购买本书" forState:UIControlStateNormal];
+    [buyButton setTitleColor:RGBHex(0xffe2e2) forState:UIControlStateNormal];
+    [buyButton setFrame:CGRectMake(0, 0, 120, 30)];
+    [buyButton setBackgroundColor:RGBHex(0xbad7df)];
+    buyButton.layer.cornerRadius = 15;
+    [buyButton addTarget:self action:@selector(buyBook) forControlEvents:UIControlEventTouchUpInside];
     
-    //元素5
-    ZJTextElement *element5 = [ZJTextElement new];
+    //绘制大小限制
+    NSValue *maxSize = [NSValue valueWithCGSize:CGSizeMake(325, MAXFLOAT)];
+    NSValue *attachSize = [NSValue valueWithCGSize:CGSizeMake(35, 35)];
+    NSValue *lineLayerSize = [NSValue valueWithCGSize:lineLayer.bounds.size];
+    NSValue *buyButtonSize = [NSValue valueWithCGSize:buyButton.bounds.size];
+    
+    //内容
+    NSString *title = @"随笔\n\n";
+    NSString *firstPara = @"       张嘉佳又出了新书，把书名取成《云边有个小卖部》。他说“时隔五年了，写给离开我们的人，写给陪伴我们的人，写给每个人心中的山和海。\n       《云边有个小卖部》离他上次的一本书，已经过去五年了。\n";
+    NSURL *webImage = [NSURL URLWithString:@"http://osnabh9h1.bkt.clouddn.com/18-6-27/92507897.jpg"];
+    NSString *separateLine = @"-----分界-----";
     NSString *localImagePath = [[NSBundle mainBundle] pathForResource:@"dy122" ofType:@"png"];
-    element5.content = [UIImage imageWithContentsOfFile:localImagePath];
-    element5.attributes.attachAlign = @(ZJTextAttachAlignCenterToFont);
-    element5.attributes.align = @2;
-    element5.attributes.font = [UIFont systemFontOfSize:10];
-    element5.attributes.minLineHeight = @100;
+    UIImage *locolImage = [UIImage imageWithContentsOfFile:localImagePath];
+    NSString *lastPara = @"\n我从来没想过时间会过的这么快，\n快的这五年我好像还没有认真生活，\n时间就没有了。\n没有认识新朋友，\n没有去过新景点，\n也没有吃过更新奇的食物，\n五年里没有任何值得留念的回忆。\n这本";
+    NSString *bookName = @"《云边有个小卖部》\n\n";
+    NSString *quote = @" 他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。\n";
     
-    //元素6
-    ZJTextElement *element6 = [ZJTextElement new];
-    element6.content = @"\n我从来没想过时间会过的这么快，\n快的这五年我好像还没有认真生活，\n时间就没有了。\n没有认识新朋友，\n没有去过新景点，\n也没有吃过更新奇的食物，\n五年里没有任何值得留念的回忆。\n这本";
-    element6.attributes.font = [UIFont systemFontOfSize:16 weight:UIFontWeightLight];
+    //阴影
+    NSShadow *shadow = [NSShadow new];
+    shadow.shadowBlurRadius = 4;
+    shadow.shadowColor = RGBHex(0x99ddcc);
     
-    //元素7
-    ZJTextElement *element7 = [ZJTextElement new];
-    element7.content = @"《云边有个小卖部》";
-    element7.attributes.font = [UIFont boldSystemFontOfSize:22];
-    element7.attributes.color = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-    element7.attributes.onClicked = ^(ZJTextElement *element) {
-        NSLog(@"书名: %@", element.content);
-    };
+    //期望输出高度, 屏幕高度减去状态栏(20), 与左右间隔(27.5 * 2)一致
+    CGFloat preferHeight = [UIScreen mainScreen].bounds.size.height - 20 - 55;
     
-    //元素8
-    ZJTextElement *element8 = [ZJTextElement new];
-    element8.content = @"\n\n       --他说，他陆陆续续写了两年，中间写到情绪崩溃，不得已停笔半年。";
-    element8.attributes.color = [[UIColor grayColor] colorWithAlphaComponent:0.3];
-    element8.attributes.letterSpace = @0;
-    element8.attributes.align = @0;
-    element8.attributes.minLineSpace = @8;
+    //背景
+    UIColor *backgroundColor1 = RGBHex(0Xbad7df);
+    UIColor *backgroundColor2 = RGBHex(0Xffe2e2);
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = @[(__bridge id)backgroundColor1.CGColor, (__bridge id)backgroundColor2.CGColor];
+    gradientLayer.startPoint = CGPointMake(0, 0);
+    gradientLayer.endPoint = CGPointMake(0, 1);
     
-    //组成数组
-    NSArray *elements = @[element1, element2, element3, element4, element5, element6, element7, element8];
+    //拼接文章
+    //标题
+    NSString *titleString = TextBuild.append(title).font(titleFont).color(titleColor).onClicked(titleOnClicked).onLayout(titleOnLayout);
+    //首段
+    NSString *firstParaString = TextBuild.append(firstPara).color(firstParaColor).align(@0);
+    //图片需要用一个空字符串起头
+    NSString *webImageString = TextBuild.append(webImage).font(separateLineFont).minLineHeight(@100);
+    //分割线
+    NSString *separateLineString = TextBuild.append(separateLine).font(separateLineFont).strokeColor(separateLineColor).strokeWidth(@1).horizontalOffset(@30);
+    //本地图片
+    NSString *locolImageString = TextBuild.append(locolImage).horizontalOffset(@30);
+    //最后一段
+    NSString *lastParaString = TextBuild.append(lastPara).font(lastParaFont).align(@1).maxLineHeight(@20).color(lastParaColor);
+    //书名
+    NSString *bookNameString = TextBuild.append(bookName).font(bookNameFont).color(bookNameColor).onClicked(bookOnClicked).align(@1).maxLineHeight(@20);
+    //引用线Layer
+    NSString *lineLayerString = TextBuild.append(lineLayer).attachSize(lineLayerSize);
+    //引用
+    NSString *quoteString = TextBuild.append(quote).color(quoteColor).letterSpace(@0).minLineSpace(@8).align(@0);
+    //按钮
+    NSString *buttonString = TextBuild.append(buyButton).attachSize(buyButtonSize).attachAlign(@0);
     
-    //默认属性
-    ZJTextAttributes *defaultAttributes = [ZJTextAttributes new];
-    defaultAttributes.maxSize = [NSValue valueWithCGSize:CGSizeMake(325, 550)];
-    defaultAttributes.letterSpace = @3;
-    defaultAttributes.minLineHeight = @20;
-    defaultAttributes.maxLineHeight = @20;
-    defaultAttributes.align = @1;
-    defaultAttributes.attachAlign = @(ZJTextAttachAlignCenterToFont);
-    defaultAttributes.cacheFrame = @YES;
-    defaultAttributes.onClicked = ^(ZJTextElement *element) {
-        NSLog(@"其他文本: %@", element.content);
-    };
+    //设置全局默认属性, 优先级低于指定属性
+    NSString *defaultAttributes = TextBuild.entire()
+    .maxSize(maxSize).align(@2).letterSpace(@3).minLineHeight(@20).attachAlign(@1).onClicked(textOnClicked).attachSize(attachSize).shadow(shadow).cornerRadius(@50).backgroundLayer(gradientLayer).horizontalMargin(@10).preferHeight(@(preferHeight));
     
-    [ZJTextFactory drawTextViewWithElements:elements defaultAttributes:defaultAttributes completion:^(UIView *drawView) {
-        drawView.frame = CGRectMake(27.5, 50, drawView.frame.size.width, drawView.frame.size.height);
-        drawView.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.1];
-        [self.view addSubview:drawView];
-    }];
+    //拼接
+    titleString
+    .append(firstParaString)
+    .append(webImageString)
+    .append(separateLineString)
+    .append(locolImageString)
+    .append(lastParaString)
+    .append(bookNameString)
+    .append(lineLayerString)
+    .append(quoteString)
+    .append(buttonString)
+    //设置默认属性
+    .append(defaultAttributes)
+    //绘制Layer
+    .drawLayer(^(CALayer *drawLayer) {
+        drawLayer.frame = CGRectMake(27.5, 47.5, drawLayer.frame.size.width, drawLayer.frame.size.height);
+        [self.view.layer addSublayer:drawLayer];
+    });
 }
 
 - (void)performanceTest {
@@ -326,7 +325,7 @@
     //2. ZJAttributedText
     __block CGFloat startTime = 0;
 
-    ZJTextZJTextAttributeCommonBlock onLayout = ^(ZJTextElement *element) {
+    ZJTextReturnBlock onLayout = ^(ZJTextElement *element) {
         CGFloat endTime = [[NSDate date] timeIntervalSince1970] * 1000;
         NSLog(@"绘制耗时: %f ms", endTime - startTime);
         //iphone 6上 绘制耗时: 0.75 ms, (将onLayout放在视图的drawRect中执行的结果)
