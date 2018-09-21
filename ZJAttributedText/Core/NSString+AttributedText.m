@@ -62,7 +62,9 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
             if ([content length]) {
                 //将前文字符串关联起来
                 NSString *newContent = [content mutableCopy];
-                objc_setAssociatedObject(newContent, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                if ([self length]) {
+                    objc_setAssociatedObject(newContent, kZJTextStringContextAssociateKey.UTF8String, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                }
                 return (NSString *)newContent;
             } else {
                 return self;
