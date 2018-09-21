@@ -179,23 +179,6 @@ static NSString *const kZJTextStringDefaultPlaceHolderPrefix = @"$DefaultPlaceHo
     }
 }
 
-- (BOOL)checkLoopWithContent:(id)content {
-    
-    NSString *slowContent = content;
-    NSString *fastContent = content;
-    while (slowContent) {
-        slowContent = objc_getAssociatedObject(slowContent, kZJTextStringContextAssociateKey.UTF8String);
-        if (slowContent) {
-            fastContent = objc_getAssociatedObject(fastContent, kZJTextStringContextAssociateKey.UTF8String);
-            if (fastContent) {
-                fastContent = objc_getAssociatedObject(fastContent, kZJTextStringContextAssociateKey.UTF8String);
-            } else {
-                return NO;
-            }
-        } else 
-    }
-}
-
 #pragma mark - attributes transform
 
 - (ZJTextDotNumberBlock)verticalOffset {

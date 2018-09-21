@@ -1,6 +1,6 @@
 {
   "name": "ZJAttributedText",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "summary": "CoreText + Asynchronous drawing + chain syntax",
   "description": "A high performance framework for rendering rich text!",
   "homepage": "https://github.com/syik/ZJAttributedText",
@@ -13,15 +13,14 @@
   },
   "source": {
     "git": "https://github.com/syik/ZJAttributedText.git",
-    "tag": "0.1.3"
+    "tag": "0.1.4"
   },
   "platforms": {
     "ios": "8.0"
   },
-  "public_header_files": "ZJAttributedText/ZJAttributedText.h, ZJAttributedText/Core/NSString+AttributedText.h, ZJAttributedText/Model/ZJTextAttributes.h, ZJAttributedText/Model/ZJTextElement.h",
   "source_files": "ZJAttributedText/**/*.{h,m}",
   "dependencies": {
-    "SDWebImage": [
+    "SDWebImage/Core": [
 
     ]
   }

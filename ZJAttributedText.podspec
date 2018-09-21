@@ -15,6 +15,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'ZJAttributedText/**/*.{h,m}'
 
-  s.dependency 'SDWebImage'
+  s.dependency 'SDWebImage/Core'
 
 end
