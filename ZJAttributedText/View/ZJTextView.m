@@ -21,7 +21,7 @@
 
 #pragma mark - user Iteraction
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     NSSet *allTouches = [event allTouches];
     UITouch *touch = [allTouches anyObject];
